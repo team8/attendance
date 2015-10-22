@@ -11,17 +11,17 @@ class Subteam(models.Model):
 class HoursWorked(models.Model):
     timeIn = models.DateTimeField()
     timeOut = models.DateTimeField()
-    totalTime = models.FloaFField()
+    totalTime = models.FloatField(default=0)
 
 
 class Student(models.Model):
     name = models.CharField(max_length=50)
     studentID = models.IntegerField()
     subteam = models.ForeignKey(Subteam)
-    hoursWorked = models.ManyToManyField(HoursWorked)
-    lastLoggedIn = models.DateTimeField()
+    hoursWorked = models.ManyToManyField(HoursWorked, blank=True)
+    lastLoggedIn = models.DateTimeField(null=True, blank=True)
     atLab = models.BooleanField(default=False)
-    totalTime = models.FloatField()
+    totalTime = models.FloatField(default=0)
 
     def __str__(self):
         return self.name

@@ -3,7 +3,7 @@ from attendanceapp.models import Subteam, HoursWorked, Student
 from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
-
+import math
 
 # Create your views here.
 
@@ -24,7 +24,11 @@ def logOut(student):
     lastLoggedIn=student.lastLoggedIn
     timeNow=timezone.now()
 
-    minutesWorked=timeNow-lastLoggedIn
+    print (timeNow-lastLoggedIn).total_seconds
+
+    print type((timeNow-lastLoggedIn).total_seconds)
+
+    minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
 
     timeWorked=HoursWorked(timeIn=lastLoggedIn,timeOut=timeNow, totalTime=minutesWorked)
@@ -36,13 +40,18 @@ def logOut(student):
 
     return minutesWorked
 
+#Documentation needed
+
 def logInPage(request):
-    studentID=request.POST['studentID']
+    try: studentID=request.POST['studentID']
+    except: return render(request, 'attendanceapp/ScanCard.html')
     student=Student.objects.get(studentID=studentID)
     if student.atLab==True:
+
         minutes = logOut(student)
-        return "Hello " + student.name + ". You worked " + str(minutes) + " today."
+        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes."
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + ". You worked " + timeReturn + " today."})
 
     else:
         logIn(student)
-        return "Hello " + student.name + " you just logged in."
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + " you just logged in"})
