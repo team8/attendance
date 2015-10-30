@@ -1,8 +1,9 @@
 body{
     margin: 0;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
 }
 html{
-    font-family: serif;
+
 }
 
 div.navbar{
@@ -17,13 +18,22 @@ p{
 
 p.innav{
     color:white;
+    font-size: 24px;
     width: 30px;
-    font-family: 30px;
     height: 30px;
     margin-left: 10px;
     margin-top: 10px;
 }
 
 .innav:hover{
-    background-color: white;
+    text-decoration: underline;
+
+    color: grey;
+}
+
+.HL{
+    margin-left: 10px;
+    color:white;
+    font-size:24px;
+
 }
