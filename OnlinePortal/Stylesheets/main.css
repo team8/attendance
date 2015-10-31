@@ -3,6 +3,10 @@ body{
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
 }
 
+/*
+Set the font and set the margin
+*/
+
 html{
 
 }
@@ -16,6 +20,10 @@ div.navbar{
 p{
     display: inline;
 }
+/*
+Display the p elements inline (for styling)
+*/
+
 
 p.innav{
     color:white;
@@ -64,5 +72,37 @@ Style the navbar seperators
 
 div.statusBar{
     width: 100%;
+    height: 400px;
+    background-color: #A8A8A8;
+    color:white;
+}
 
+
+
+.header{
+    color: black;
+    /*padding: 10px;*/
+    font-size: 45px;
+
+}
+/*
+Specify the header styling when it is the child of the status bar
+*/
+
+p.left{
+    margin-top: 0px;
+    /*background-color: red;*/
+    height: 100%;
+    width: 49%;
+    float: left;
+}
+
+p.right{
+     border-left-style: solid;
+     border-color: black;
+    margin-top: 0px;
+    /*background-color: blue;*/
+    height: 100%;
+    width: 49%;
+    float: left;
 }
