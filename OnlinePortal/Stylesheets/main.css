@@ -24,8 +24,17 @@ p.innav{
     margin-left: 10px;
     margin-top: 10px;
 }
+p.rightIn{
+    color:white;
+    font-size: 24px;
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    margin-top: 10px;
 
-.innav:hover{
+}
+
+.rightIn:hover{
     text-decoration: underline;
 
     color: grey;
