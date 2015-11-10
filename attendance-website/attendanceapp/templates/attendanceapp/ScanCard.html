@@ -1,0 +1,47 @@
+<html>
+<head>
+
+<title>Attendance App</title>
+
+</head>
+
+<body>
+
+  <div id="container">
+
+    <p>
+      Hi!
+    </p>
+
+    <form action="http://127.0.0.1:8000/ScanCard/" method="post">
+      {% csrf_token %}
+      <input type="text" id="cardBox" name="studentID">
+      <input type="submit">
+    </form>
+
+    {{ message }}
+
+  </div>
+
+  <!--
+  <script type="text/javascript">
+    function logInOut() {
+
+      var cardID = document.getElementById('cardBox').value;
+      var form = createElement("form");
+      form.action = "http://127.0.0.1:8000/ScanCard/";
+      form.method = 'POST';
+      var input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "studentID";
+      input.value = cardID;
+      form.appendChild(input);
+      form.submit;
+
+    }
+  </script>
+  !-->
+
+</body>
+
+</html>
