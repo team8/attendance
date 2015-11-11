@@ -8,3 +8,6 @@ Our plan is to use a little box that we made for a previous attendance system (m
 
 ##Previous attendance system?
 Yep. One of our contributors made an attendance system (that the team is currently using) in under a month as his Eagle Project. Since there was very little time for development, they ended up using Google Spreadsheets as a makeshift "backend", and a cannibalized Google Form for input. Obviously, this is not ideal for a variety of reasons, and this is why that we are working on this new system.
+
+##Final Goal
+Our final goal with this attendance system is to have a system in our lab, and an online portal.  The attendance system in the lab will be able to log people in and log out.  Online, people will be able to view their hours, log themself in and out, and more!
