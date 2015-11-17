@@ -1,3 +1,7 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'attendanceapp/style.css' %}" />
+
 <html>
 <head>
 
@@ -7,16 +11,15 @@
 
 <body>
 
-  <div id="container">
-
-    <p>
-      Hi!
-    </p>
+  <div id="page-wrap">
+    <div id="header">
+      <img src="static/attendanceapp/images/roboticsHeader.jpg" alt="argh"/>
+    </div>
 
     <form action="{% url 'ScanCard' %}" method="post">
       {% csrf_token %}
       <input type="text" id="cardBox" name="studentID">
-      <input type="submit">
+      <input type="submit" value="Log in/out">
     </form>
 
     {{ message }}
