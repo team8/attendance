@@ -13,7 +13,7 @@
       Hi!
     </p>
 
-    <form action="http://127.0.0.1:8000/ScanCard/" method="post">
+    <form action="{% url 'ScanCard' %}" method="post">
       {% csrf_token %}
       <input type="text" id="cardBox" name="studentID">
       <input type="submit">
