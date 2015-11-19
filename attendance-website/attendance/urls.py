@@ -21,4 +21,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='Index'),
     url(r'^ScanCard/$', views.logInPage, name='ScanCard'),
+    url(r'^PeopleInLab/$', views.whoIsInLab, name='PeopleInLab'),
+    url(r'^PersonInLab/$', views.specificPersonInLab, name='PersonInLab'),
 ]
