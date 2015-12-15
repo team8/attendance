@@ -66,12 +66,14 @@ def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out
     #If this fails...???
-    try: studentID=request.POST['studentID']
+    try:
+        student=Student.objects.get(studentID=studentID)
+        studentID=request.POST['studentID']
 
     except:
         return render(request, 'attendanceapp/ScanCard.html')
 
-    student=Student.objects.get(studentID=studentID)
+
     if student.atLab==True:
 
         minutes = logOut(student)
