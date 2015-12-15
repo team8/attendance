@@ -67,11 +67,12 @@ def logInPage(request):
     #If this passes, that means a student is logging in/out
     #If this fails...???
     try:
-        studentID = request.POST['studentID']
+        student=Student.objects.get(studentID=studentID)
+        studentID=request.POST['studentID']
     except:
-        return render(request, 'attendanceapp/ScanCard.html')
+        return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 
-    student=Student.objects.get(studentID=studentID)
+
     if student.atLab==True:
 
         minutes = logOut(student)
