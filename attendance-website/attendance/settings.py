@@ -25,7 +25,7 @@ SECRET_KEY = 'ii@k+ki-zf#&hp(6r^t1w%je3%hz)uz(!xwphe2b8#zoxoeed)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [".pturnbull.me"]
 
 
 # Application definition
@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'attendanceapp',
+    'mod_wsgi.server',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,3 +102,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
