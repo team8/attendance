@@ -71,7 +71,7 @@ def logInPage(request):
         studentID=request.POST['studentID']
 
     except:
-        return render(request, 'attendanceapp/ScanCard.html')
+        return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 
 
     if student.atLab==True:
