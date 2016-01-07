@@ -69,7 +69,6 @@ def logInPage(request):
     try:
         student=Student.objects.get(studentID=studentID)
         studentID=request.POST['studentID']
-
     except:
         return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 
@@ -83,3 +82,19 @@ def logInPage(request):
     else:
         logIn(student)
         return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + " you just logged in"})
+
+#This is part of our Slack Integration. This one is supposed to return a list of people currently in the lab. SLack will send a payload through POST, we have to interpret it and send a response back. Not implemented (yet).
+def whoIsInLab(request):
+    try:
+        pass
+    except Exception as e:
+        raise
+
+
+#This is part of our Slack Integration. Same technical details as above, this one will return true/false depending on whether the specific person requested is in the lab or not. Not implemented (yet).
+def specificPersonInLab(request):
+    try:
+        ID = request.POST['studentID']
+    except KeyError:
+        return
+    student=Student.objects.get(studentID=ID)
