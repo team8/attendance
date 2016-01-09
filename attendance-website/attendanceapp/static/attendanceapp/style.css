@@ -12,4 +12,6 @@
   border: 5px solid #73AD21;
   text-align: center;
   background-image: url(images/roboticsHeader.jpg);
+  background-size: 800px 200px;
+  background-repeat: no-repeat;
 }
