@@ -7,9 +7,9 @@
 }
 
 #header {
-  /* width: idk man */
-  height: 500px
-  border: 5px solid #73AD21
+  height: 200px;
+  width: 100%;
+  border: 5px solid #73AD21;
   text-align: center;
-  /* background-image: url(images/roboticsHeader.jpg); */
+  background-image: url(images/roboticsHeader.jpg);
 }
