@@ -70,8 +70,8 @@ def logInPage(request):
         studentID=request.POST['studentID']
     except:
         return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-        student=Student.objects.get(studentID=studentID)
 
+    student=Student.objects.get(studentID=studentID)
     if student.atLab==True:
 
         minutes = logOut(student)
