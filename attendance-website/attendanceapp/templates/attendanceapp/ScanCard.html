@@ -7,13 +7,21 @@
 
 <title>Attendance App</title>
 
+<style>
+
+#page-wrap {
+  background-color: {{ color }};
+}
+
+</style>
+
 </head>
 
 <body>
 
   <div id="page-wrap">
     <div id="header">
-      <img src="static/attendanceapp/images/roboticsHeader.jpg" alt="argh"/>
+      <img src="static/attendanceapp/images/roboticsHeader.jpg" alt="Header is broken because static content is hard /s"/>
     </div>
 
     <form action="{% url 'ScanCard' %}" method="post">
