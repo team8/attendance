@@ -75,12 +75,12 @@ def logInPage(request):
     if student.atLab==True:
 
         minutes = logOut(student)
-        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes." #This should be encapsulated
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + ". You worked " + timeReturn + " today."}, {'color':"#FF0000"}) #I don't know how much we can do about this though, sadly. I am currently passing another argument to render, "color". Since this is the logout method, it sets the background color to red. I am trying to see if I can use this to set the background color of the page via CSS. This is probably not the proper way to do it, but it's 3AM and I should really sleep.
+        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes."
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + ". You worked " + timeReturn + " today."})
 
     else:
         logIn(student)
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + ", you just logged in"}, {'color':"#32CD32"}) #This *should* set the background color to lime green, to indicate that they have successfully logged in. Again, this is a "hack", let's see if I know what I'm doing.
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + " you just logged in"})
 
 #This is part of our Slack Integration. This one is supposed to return a list of people currently in the lab. SLack will send a payload through POST, we have to interpret it and send a response back. Not implemented (yet).
 def whoIsInLab(request):
