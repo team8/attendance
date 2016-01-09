@@ -7,11 +7,10 @@
 }
 
 #header {
-  height: 200px;
+  height: 83px;
   width: 100%;
-  border: 5px solid #73AD21;
   text-align: center;
   background-image: url(images/roboticsHeader.jpg);
-  background-size: 800px 200px;
+  background-size: 800px 83px;
   background-repeat: no-repeat;
 }
