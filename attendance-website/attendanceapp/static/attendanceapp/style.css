@@ -2,6 +2,7 @@
   width: 800px;
   margin: 10 auto;
   /* background-image: url(images/circuitBoard.png); */
+  background-color: #FF0080; /* Fuschia. I want to see if my stylesheet is functioning at all. */
   text-align: center;
 }
 
