@@ -13,12 +13,11 @@
 
   <div id="page-wrap">
     <div id="header">
-      <img src="static/attendanceapp/images/roboticsHeader.jpg" alt="argh"/>
     </div>
 
     <form action="{% url 'ScanCard' %}" method="post">
       {% csrf_token %}
-      <input type="text" id="cardBox" name="studentID">
+      <input type="text" id="cardBox" name="studentID" autofocus>
       <input type="submit" value="Log in/out">
     </form>
 
