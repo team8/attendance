@@ -65,12 +65,12 @@ def logOut(student):
     return minutesWorked
 
 def makeNewStudent(ID):
-    try:
+    
         html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
         name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
         Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
         return True
-    except: return False
+    #return False
 
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
