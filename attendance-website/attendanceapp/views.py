@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
 import math
-import urllib2
+import requests
 import re
 
 # Create your views here.
@@ -66,7 +66,7 @@ def logOut(student):
 
 def makeNewStudent(ID):
     try:
-        html = urllib2.urlopen(urllib2.Request("https://palo-alto.edu/Forgot/Reset.cfm",urllib2.urlencode({"username":str(ID)})))
+        html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
         name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(0)
         Student(name=name,studentID=ID,subteam=Subteam.objects.filter(name="Unknown")).save()
         return True
