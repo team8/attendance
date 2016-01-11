@@ -67,8 +67,8 @@ def logOut(student):
 def makeNewStudent(ID):
     try:
         html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
-        name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(0)
-        Student(name=name,studentID=ID,subteam=Subteam.objects.filter(name="Unknown")).save()
+        name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
+        Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
         return True
     except: return False
 
@@ -76,16 +76,17 @@ def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out
     #If this fails...???
-    try:
-        studentID=request.POST['studentID']
-        student=Student.objects.get(studentID=studentID)
+    try: studentID=request.POST['studentID']
+    except: return render(request, 'attendanceapp/ScanCard.html')
+    
+    
+    try:student=Student.objects.get(studentID=studentID)
 
     except:
-        
-        try:
-            if makeNewStudent(request.POST['studentID']) == False:
-                return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-        except: return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+
+        if makeNewStudent(request.POST['studentID']) == False:
+            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+    
         else:
             student=Student.objects.get(studentID=studentID)
 
