@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
 import math
+import requests
+import re
 
 # Create your views here.
 
@@ -62,15 +64,31 @@ def logOut(student):
     #Return the number of minutes
     return minutesWorked
 
+def makeNewStudent(ID):
+    
+        html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
+        name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
+        Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+        return True
+    #return False
+
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out
     #If this fails...???
-    try:
-        student=Student.objects.get(studentID=studentID)
-        studentID=request.POST['studentID']
+    try: studentID=request.POST['studentID']
+    except: return render(request, 'attendanceapp/ScanCard.html')
+    
+    
+    try:student=Student.objects.get(studentID=studentID)
+
     except:
-        return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+
+        if makeNewStudent(request.POST['studentID']) == False:
+            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+    
+        else:
+            student=Student.objects.get(studentID=studentID)
 
 
     if student.atLab==True:
