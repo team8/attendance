@@ -9,6 +9,9 @@ import re
 
 # Create your views here.
 
+#idNotFound =  render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+#helloMartin = render(request, 'attendanceapp/ScanCard.html', {'message':"Hi Martin!"})
+
 def index(request):
     #Load the index html page
     template=loader.get_template('attendanceapp/index.html')
@@ -65,12 +68,14 @@ def logOut(student):
     return minutesWorked
 
 def makeNewStudent(ID):
-    
+
     html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
     name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
     Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
     return True
     #return False
+
+
 
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
@@ -78,16 +83,27 @@ def logInPage(request):
     #If this fails...???
     try: studentID=request.POST['studentID']
     except: return render(request, 'attendanceapp/ScanCard.html')
-    
-    
-    try:student=Student.objects.get(studentID=studentID)
+
+    #if len(studentID)==4:
+    #    if studentID=="8888":
+    #        #return helloMartin
+    #    else: return idNotFound
+
+    #Check to see if the inputted # meets the standard for ID# format. This
+    #should be encapsulated, but it may be redundant with the introduction of
+    #the HTML5 pattern attribute on the ScanCard page.
+    if len(studentID) != 8:
+        if len(studentID)==14:
+            studentID=studentID[5:13]
+        else: return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+
+    try: student=Student.objects.get(studentID=studentID)
 
     except:
 
         if makeNewStudent(request.POST['studentID']) == False:
-            print "make student failing"
+            print "makeNewStudent failing"
             return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-    
         else:
             student=Student.objects.get(studentID=studentID)
 
@@ -100,9 +116,13 @@ def logInPage(request):
 
     else:
         logIn(student)
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + " you just logged in"})
+        return render(request,'attendanceapp/ScanCard.html',
+        {'message':"Hello " + student.name + " you just logged in"})
 
-#This is part of our Slack Integration. This one is supposed to return a list of people currently in the lab. SLack will send a payload through POST, we have to interpret it and send a response back. Not implemented (yet).
+#This is part of our Slack Integration.
+#This one is supposed to return a list of people currently in the lab.
+#Slack will send a payload through POST.
+#We have to interpret it and send a response back. Not implemented (yet).
 def whoIsInLab(request):
     try:
         pass
@@ -110,7 +130,8 @@ def whoIsInLab(request):
         raise
 
 
-#This is part of our Slack Integration. Same technical details as above, this one will return true/false depending on whether the specific person requested is in the lab or not. Not implemented (yet).
+#This is part of our Slack Integration.
+#Same technical details as above, this one will return true/false depending on whether the specific person requested is in the lab or not. Not implemented (yet).
 def specificPersonInLab(request):
     try:
         ID = request.POST['studentID']
