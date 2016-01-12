@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
 import math
+import requests
+import re
 
 # Create your views here.
 
@@ -62,16 +64,34 @@ def logOut(student):
     #Return the number of minutes
     return minutesWorked
 
+def makeNewStudent(ID):
+    
+    html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
+    name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
+    Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+    return True
+    #return False
+
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out
     #If this fails...???
     try: studentID=request.POST['studentID']
+    except: return render(request, 'attendanceapp/ScanCard.html')
+    
+    
+    try:student=Student.objects.get(studentID=studentID)
 
     except:
-        return render(request, 'attendanceapp/ScanCard.html')
 
-    student=Student.objects.get(studentID=studentID)
+        if makeNewStudent(request.POST['studentID']) == False:
+            print "make student failing"
+            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+    
+        else:
+            student=Student.objects.get(studentID=studentID)
+
+
     if student.atLab==True:
 
         minutes = logOut(student)
@@ -81,3 +101,19 @@ def logInPage(request):
     else:
         logIn(student)
         return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + " you just logged in"})
+
+#This is part of our Slack Integration. This one is supposed to return a list of people currently in the lab. SLack will send a payload through POST, we have to interpret it and send a response back. Not implemented (yet).
+def whoIsInLab(request):
+    try:
+        pass
+    except Exception as e:
+        raise
+
+
+#This is part of our Slack Integration. Same technical details as above, this one will return true/false depending on whether the specific person requested is in the lab or not. Not implemented (yet).
+def specificPersonInLab(request):
+    try:
+        ID = request.POST['studentID']
+    except KeyError:
+        return
+    student=Student.objects.get(studentID=ID)
