@@ -9,7 +9,7 @@ import re
 
 # Create your views here.
 
-idNotFound =  render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+#idNotFound =  render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 #helloMartin = render(request, 'attendanceapp/ScanCard.html', {'message':"Hi Martin!"})
 
 def index(request):
@@ -98,7 +98,7 @@ def logInPage(request):
     if len(studentID) != 8:
         if len(studentID)==14:
             studentID=studentID[5:13]
-        else: return idNotFound
+        else: return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 
     try: student=Student.objects.get(studentID=studentID)
 
@@ -106,7 +106,7 @@ def logInPage(request):
 
         if makeNewStudent(request.POST['studentID']) == False:
             print "makeNewStudent failing"
-            return idNotFound
+            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
         else:
             student=Student.objects.get(studentID=studentID)
 
