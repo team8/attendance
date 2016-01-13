@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.template import RequestContext, loader
 
 import math
-import requests
+import urllib2
 import re
 
 # Create your views here.
@@ -72,25 +72,25 @@ def logOut(student):
 
 
 def makeNewStudent(ID):
-
-    html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
-
-    try: name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
-    except: return render(ID,'attendanceapp/ScanCard.html',{'message':"Sorry, submitted ID# is not in PAUSD database."})
-
-    Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
-    return render(ID,'attendanceapp/ScanCard.html',{'message':"Unknown PAUSD student has been added to database."})
-
-    return True
-    #return False
+    try:
+        html = urllib2.urlopen(urllib2.Request("https://palo-alto.edu/Forgot/Reset.cfm",urllib2.urlencode({"username":str(ID)})))
+        name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(0)
+        Student(name=name,studentID=ID,subteam=Subteam.objects.filter(name="Unknown")).save()
+        return True
+    except: return False
 
 
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out
     #If this fails...???
-    try: studentID=request.POST['studentID']
-    except: return render(request, 'attendanceapp/ScanCard.html')
+
+    try:
+        studentID=request.POST['studentID']
+        student=Student.objects.get(studentID=studentID)
+
+    except:
+        if makeNewStudent(request.POST['studentID']) == False
 
     #if len(studentID)==4:
     #    if studentID=="8888":
@@ -108,7 +108,6 @@ def logInPage(request):
     try: student=Student.objects.get(studentID=studentID)
 
     except:
-
         if makeNewStudent(request.POST['studentID']) == False:
             print "makeNewStudent failing"
             return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
@@ -119,14 +118,12 @@ def logInPage(request):
     if student.atLab==True:
 
         minutes = logOut(student)
-        timeReturn = str(math.trunc(minutes/60)) + " hours" + " and " + str(math.trunc(minutes%60)) + " minutes"
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you worked " + timeReturn + " today! Nice job!"})
+        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job!"})
 
     else:
         logIn(student)
-        return render(request,'attendanceapp/ScanCard.html',
-        {'message':"Hey " + student.name + "! You're logged in!"})
-
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
 
 #This is part of our Slack Integration.
 #This one is supposed to return a list of people currently in the lab.
