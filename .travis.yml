@@ -1,4 +1,7 @@
 language: python
 
+email: false
+
+
 script:
   ls
