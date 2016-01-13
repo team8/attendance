@@ -3,6 +3,7 @@ from attendanceapp.models import Subteam, HoursWorked, Student
 from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
+
 import math
 import requests
 import re
@@ -22,6 +23,7 @@ def index(request):
     #Render the html and return it to the user -> This is only used in the index view
     return HttpResponse(template.render(context))
 
+
 def logIn(student):
     #Make the student at the lab
     student.atLab=True
@@ -31,6 +33,7 @@ def logIn(student):
 
     #Write to the database
     student.save()
+
 
 def logOut(student):
     #Tell the system that the student is no longer in the lab
@@ -67,17 +70,19 @@ def logOut(student):
     #Return the number of minutes
     return minutesWorked
 
+
 def makeNewStudent(ID):
 
     html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
-    name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
 
-    try: Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
-    except: render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, submitted ID# is not in PAUSD database."})
+    try: name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
+    except: return render(ID,'attendanceapp/ScanCard.html',{'message':"Sorry, submitted ID# is not in PAUSD database."})
+
+    Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+    return render(ID,'attendanceapp/ScanCard.html',{'message':"Unknown PAUSD student has been added to database."})
 
     return True
     #return False
-
 
 
 def logInPage(request):
@@ -114,13 +119,14 @@ def logInPage(request):
     if student.atLab==True:
 
         minutes = logOut(student)
-        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes."
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey" + student.name + ", you worked " + timeReturn + " today! Nice job!"})
+        timeReturn = str(math.trunc(minutes/60)) + " hours" + " and " + str(math.trunc(minutes%60)) + " minutes"
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you worked " + timeReturn + " today! Nice job!"})
 
     else:
         logIn(student)
         return render(request,'attendanceapp/ScanCard.html',
         {'message':"Hey " + student.name + "! You're logged in!"})
+
 
 #This is part of our Slack Integration.
 #This one is supposed to return a list of people currently in the lab.
