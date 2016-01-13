@@ -3,15 +3,14 @@ import time
 import os
 
 #This script is a modified version of our existing logOut function. It serves to auto log out all students who failed to do so manually, and gives them a set number of hours.
-
-def logOut(student):
-    student.atLab=False
+ logOut(student):
+    studalse
 
     #Tell the system that the student is no longer in the lab
-    lastLoggedIn=student.lastLoggedIn
+    lastastLoggedIn
 
     #This sets the amount of a time a student gets if they fail to log out manually in minutes
-    minutesWorked=150
+    minutesWorked 150
 
     #Create the "Time worked" object to be added to the student database
     timeWorked=HoursWorked(timeIn=lastLoggedIn,autoLogout=True, totalTime=minutesWorked)
