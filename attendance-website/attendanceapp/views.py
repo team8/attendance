@@ -91,7 +91,8 @@ def logInPage(request):
 
     except:
         if makeNewStudent(request.POST['studentID']) == False:
-            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
+-            print "make student failing"
+             return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 
     #if len(studentID)==4:
     #    if studentID=="8888":
