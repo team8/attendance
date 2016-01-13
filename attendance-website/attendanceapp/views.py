@@ -85,12 +85,8 @@ def logInPage(request):
     #If this passes, that means a student is logging in/out
     #If this fails...???
 
-    try:
-        studentID=request.POST['studentID']
-        student=Student.objects.get(studentID=studentID)
-
-    except:
-        if makeNewStudent(request.POST['studentID']) == False
+    try: studentID=request.POST['studentID']
+    except: return render(request, 'attendanceapp/ScanCard.html')
 
     #if len(studentID)==4:
     #    if studentID=="8888":
@@ -103,9 +99,7 @@ def logInPage(request):
     if len(studentID) != 8:
         if len(studentID)==14:
             studentID=studentID[5:13]
-        else: return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-
-    try: student=Student.objects.get(studentID=studentID)
+        else: return idNotFound
 
     except:
         if makeNewStudent(request.POST['studentID']) == False:
