@@ -71,7 +71,10 @@ def makeNewStudent(ID):
 
     html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
     name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(1)
-    Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+
+    try: Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+    except: render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, submitted ID# is not in PAUSD database."})
+
     return True
     #return False
 
@@ -112,12 +115,12 @@ def logInPage(request):
 
         minutes = logOut(student)
         timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes."
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hello " + student.name + ". You worked " + timeReturn + " today."})
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey" + student.name + ", you worked " + timeReturn + " today! Nice job!"})
 
     else:
         logIn(student)
         return render(request,'attendanceapp/ScanCard.html',
-        {'message':"Hello " + student.name + " you just logged in"})
+        {'message':"Hey " + student.name + "! You're logged in!"})
 
 #This is part of our Slack Integration.
 #This one is supposed to return a list of people currently in the lab.
