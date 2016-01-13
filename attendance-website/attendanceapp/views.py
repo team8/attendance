@@ -101,6 +101,8 @@ def logInPage(request):
             studentID=studentID[5:13]
         else: return idNotFound
 
+    try: student=Student.objects.get(studentID=studentID)
+
     except:
         if makeNewStudent(request.POST['studentID']) == False:
             print "makeNewStudent failing"
