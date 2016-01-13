@@ -90,7 +90,7 @@ def logInPage(request):
         student=Student.objects.get(studentID=studentID)
 
     except:
-        if makeNewStudent(request.POST['studentID']) == False
+        if makeNewStudent(request.POST['studentID']) == False:
             return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
         else:
             student=Student.objects.get(studentID=studentID)
