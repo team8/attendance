@@ -2,6 +2,15 @@ language: python
 #Set the language and turn off email
 email: false
 
+#Slack notifications!
+#we always want notifications if build fails
+#we only want success notifications if change
+notifications:
+  slack: $slack_key
+    on_success: change
+    on_failure: always
+
+
 #compile all python files
 script:
   - python -m py_compile attendance-website/autoLogout.py
