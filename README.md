@@ -1,4 +1,4 @@
-# attendance
+# attendance [![Build Status](https://travis-ci.org/team8/attendance.svg?branch=dev)](https://travis-ci.org/team8/attendance)
 
 ##What is this?
 This is an attendance system we are working on to benefit our robotics team, FRC Team \#8. We are currently working with a combination of [Django](https://www.djangoproject.com/), a Python library designed (well, for a lot of things) to make working with databases a bit easier; HTML; and some PHP for the online portal we're creating.
