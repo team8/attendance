@@ -1,8 +1,8 @@
 language: python
-
+#Set the language and turn off email
 email: false
 
-
+#compile all python files
 script:
   - python -m py_compile attendance-website/autoLogout.py
   - python -m py_compile attendance-website/manage.py
