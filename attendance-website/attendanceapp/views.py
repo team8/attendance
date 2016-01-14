@@ -122,6 +122,8 @@ def viewPeoplePWPage(request):
     return render(request, "attendanceapp/viewPeoplePwPage.html")
 
 def viewPeopleInfo(request):
+    print called
+    print request.POST[password]
     if request.POST['password'] == "thepassword":
         password = ""
         students = []
@@ -129,8 +131,8 @@ def viewPeopleInfo(request):
             students.append([student.name,student.subteam.name,student.totalTime,student.studentID])
         return render(request,"attendanceapp/viewPeopleHours.html",{"peopleInfo":students})
     else: return viewPeoplePWPage(request)
-    
+
 def viewPersonInfo(request):
-    student = Student.objects.get(studentID = int(request.POST['id'])
-    return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam",student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
+    student = Student.objects.get(studentID = int(request.POST['id']))
+    #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 
