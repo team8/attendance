@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<title>
+			View Everyone's hours
+		</title>
+	</head>
+
+	<body>
+
+	<h1>
+		Everyone's hours!
+	</h1>
+
+	{for person in peopleInfo}
+
+	<form target="{% url 'viewPersonInfo' %}" method="POST">
+		{% csrf_token %}
+		Name: {{person.0}}
+		Subteam: {{person.1}}
+		Total Hours: {{person.2}}
+		Student ID: {{person.3}}
+
+		<input value="{{person.3}}" hidden="true" name="id">
+		<input type="submit" value="View Personal Info">
+
+	</form>
+
+	{% endif %}
+
+	</body>
+</html>

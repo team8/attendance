@@ -1,0 +1,22 @@
+<html>
+<head>
+	<title>
+		Login to view hours
+	</title>
+</head>
+<body>
+	<center>
+	<h1>
+		Please Enter the Password
+	<h1>
+
+	<form target="{% url 'viewPeopleInfo' %}" method="POST">
+		{% csrf_token %}
+
+		<input type="password" name="password">
+		<input type="submit" value="View Hours">
+
+	</form>
+		
+	<center>
+</body>
