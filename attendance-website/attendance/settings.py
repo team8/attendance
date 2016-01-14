@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'attendanceapp',
-    #'mod_wsgi.server',
+    'mod_wsgi.server',
 )
 
 MIDDLEWARE_CLASSES = (
