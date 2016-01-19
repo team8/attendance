@@ -10,7 +10,7 @@
 		Please Enter the Password
 	<h1>
 
-	<form target="{% url 'viewPeopleInfo' %}" method="POST">
+	<form target="{% url 'viewPeopleInfo' %}" method="post">
 		{% csrf_token %}
 
 		<input type="password" name="password">

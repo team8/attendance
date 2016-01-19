@@ -119,18 +119,18 @@ def specificPersonInLab(request):
     student=Student.objects.get(studentID=ID)
 
 def viewPeoplePWPage(request):
+    print request.POST
     return render(request, "attendanceapp/viewPeoplePwPage.html")
 
 def viewPeopleInfo(request):
-    print called
-    print request.POST[password]
-    if request.POST['password'] == "thepassword":
-        password = ""
+    # print "HELLO!!!!"
+    # print request.POST["password"]
+    # if request.POST['password'] == "thepassword":
         students = []
         for student in Student.objects.all():
-            students.append([student.name,student.subteam.name,student.totalTime,student.studentID])
+            students.append([student.name,student.subteam.name,student.totalTime/60,student.studentID,[[i.timeIn,i.timeOut,i.totalTime/60] for i in student.hoursWorked.all()]])
         return render(request,"attendanceapp/viewPeopleHours.html",{"peopleInfo":students})
-    else: return viewPeoplePWPage(request)
+    # else: return viewPeoplePWPage(request)
 
 def viewPersonInfo(request):
     student = Student.objects.get(studentID = int(request.POST['id']))
