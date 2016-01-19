@@ -7,6 +7,7 @@ from django.template import RequestContext, loader
 import math
 import urllib2
 import re
+import time
 
 # Create your views here.
 
@@ -33,6 +34,9 @@ def logIn(student):
 
     #Write to the database
     student.save()
+
+    #Visually confirm that the student has successfully logged in by changing the color
+    #changeBackgroundColor("#83F52C")
 
 
 def logOut(student):
@@ -70,7 +74,6 @@ def logOut(student):
     #Return the number of minutes
     return minutesWorked
 
-
 def makeNewStudent(ID):
     try:
         html = urllib2.urlopen(urllib2.Request("https://palo-alto.edu/Forgot/Reset.cfm",urllib2.urlencode({"username":str(ID)})))
@@ -86,7 +89,7 @@ def logInPage(request):
     #If this fails...???
 
     try: studentID=request.POST['studentID']
-    except: return render(request, 'attendanceapp/ScanCard.html')
+    except: return render(request, 'attendanceapp/ScanCard.html', {'color':"#FFFFFF"})
 
     #if len(studentID)==4:
     #    if studentID=="8888":
@@ -102,7 +105,6 @@ def logInPage(request):
         else: return idNotFound
 
     try: student=Student.objects.get(studentID=studentID)
-
     except:
         if makeNewStudent(request.POST['studentID']) == False:
             print "makeNewStudent failing"
@@ -110,16 +112,18 @@ def logInPage(request):
         else:
             student=Student.objects.get(studentID=studentID)
 
-
+    #If the student is in the lab, log them out.
     if student.atLab==True:
-
-        minutes = logOut(student)
-        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job!"})
-
+        minutes = logOut(student) #Add their hours to the database
+        timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes" #Prepare their time worked in minutes form for display
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job!", 'color':"#FF0000"}) #Display their hours to them, give them an encouraging message, turn the background red.
     else:
-        logIn(student)
-        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
+        logIn(student) #Run the logIn method
+        return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!", 'color':"#83F52C"}) #Say hi, turn the background green.
+
+    #After 3 seconds, return the background color back to white and remove the message.
+    time.sleep(3)
+    return render(request,'attendanceapp/ScanCard.html',{'color':"#FFFFFF"})
 
 #This is part of our Slack Integration.
 #This one is supposed to return a list of people currently in the lab.

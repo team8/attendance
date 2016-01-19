@@ -1,10 +1,17 @@
 {% load staticfiles %}
 
-<link rel="stylesheet" type="text/css"
-href="{% static 'attendanceapp/style.css' %}" />
-
 <html>
 <head>
+
+<style>
+  #page-wrap {
+    background-color: {{ color }};
+  }
+
+</style>
+
+<link rel="stylesheet" type="text/css"
+href="{% static 'attendanceapp/style.css' %}" />
 
 <title>Attendance App</title>
 

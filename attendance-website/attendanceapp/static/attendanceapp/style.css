@@ -1,16 +1,21 @@
 #page-wrap {
-  width: 800px;
-  margin: 10 auto;
-  /* background-image: url(images/circuitBoard.png); */
-  background-color: #FFFFFF;
+  height: 100%;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
+  background-size: cover;
+  /* background-image: url(images/circuitBoard.png); */
 }
 
 #header {
-  height: 83px;
+  height: 125px;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
-  background-image: url(images/roboticsHeader.jpg);
-  background-size: 800px 83px;
+  background-image: url(images/roboticsHeader.png);
+  /*background-size: 1200px 125px;*/
+  background-position: center;
   background-repeat: no-repeat;
 }
