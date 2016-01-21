@@ -72,12 +72,14 @@ def logOut(student):
 
 
 def makeNewStudent(ID):
+
     try:
-        html = urllib2.urlopen(urllib2.Request("https://palo-alto.edu/Forgot/Reset.cfm",urllib2.urlencode({"username":str(ID)})))
-        name = re.search(r'<input name="name" type="hidden" label="name" value=(.*?)"',html).group(0)
-        Student(name=name,studentID=ID,subteam=Subteam.objects.filter(name="Unknown")).save()
-        return True
-    except: return False
+        html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
+        name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
+        Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+	   return True
+    except:
+        return False
 
 
 def logInPage(request):
@@ -140,3 +142,22 @@ def specificPersonInLab(request):
     except KeyError:
         return
     student=Student.objects.get(studentID=ID)
+
+def viewPeoplePWPage(request):
+    print request.POST
+    return render(request, "attendanceapp/viewPeoplePwPage.html")
+
+def viewPeopleInfo(request):
+    # print "HELLO!!!!"
+    # print request.POST["password"]
+    # if request.POST['password'] == "thepassword":
+        students = []
+        for student in Student.objects.all():
+            students.append([student.name,student.subteam.name,student.totalTime/60,student.studentID,[[i.timeIn,i.timeOut,i.totalTime/60] for i in student.hoursWorked.all()]])
+        return render(request,"attendanceapp/viewPeopleHours.html",{"peopleInfo":students})
+    # else: return viewPeoplePWPage(request)
+
+def viewPersonInfo(request):
+    student = Student.objects.get(studentID = int(request.POST['id']))
+    #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
+

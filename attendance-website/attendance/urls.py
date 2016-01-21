@@ -23,4 +23,7 @@ urlpatterns = [
     url(r'^ScanCard/$', views.logInPage, name='ScanCard'),
     url(r'^PeopleInLab/$', views.whoIsInLab, name='PeopleInLab'),
     url(r'^PersonInLab/$', views.specificPersonInLab, name='PersonInLab'),
+    url(r'^viewPeoplePWPage/$',views.viewPeoplePWPage,name="viewPeoplePWPage"),
+    url(r'^viewPeopleInfo/$',views.viewPeopleInfo,name="viewPeopleInfo"),
+    url(r'^viewPersonInfo/$',views.viewPersonInfo,name="viewPersonInfo"),
 ]

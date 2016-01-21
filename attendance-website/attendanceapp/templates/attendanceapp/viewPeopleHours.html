@@ -1,0 +1,42 @@
+<html>
+	<head>
+
+		<title>
+			View Everyone's hours
+		</title>
+	</head>
+
+	<body>
+
+	<h1>
+		Everyone's hours!
+	</h1>
+	{% for person in peopleInfo %}
+
+
+
+		Name: {{person.0}}
+		<br>
+		Subteam: {{person.1}}
+		<br>
+		Total Hours: {{person.2}}
+		<br>
+		Student ID: {{person.3}}
+		<br>
+		Days Worked:
+			{%for dayWorked in person.4 %}
+				<br>
+				Time in: {{dayWorked.0}}
+				<br>
+				Time Out: {{dayWorked.1}}
+				<br>
+				Total Time: {{dayWorked.2}}
+				<br>
+			{%endfor%}
+		<br><br><br>
+
+	{% endfor %}
+
+
+	</body>
+</html>
