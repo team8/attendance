@@ -77,7 +77,7 @@ def makeNewStudent(ID):
         html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
         name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
         Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
-	   return True
+	return True
     except:
         return False
 
