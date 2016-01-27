@@ -25,6 +25,6 @@ class Student(models.Model):
     lastLoggedIn = models.DateTimeField(null=True, blank=True) #Attribute that displays the last time this student logged in.
     atLab = models.BooleanField(default=False) #Boolean attribute that tells us if the student is at the lab.
     totalTime = models.FloatField(default=0)  #Attribute that...again, we need clarity on this one
-    password = models.CharField(max_length=400) # this is the max hash length, max pw length should be 25
+#    password = models.CharField(max_length=400) # this is the max hash length, max pw length should be 25
     def __str__(self):
         return self.name
