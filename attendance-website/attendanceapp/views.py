@@ -7,11 +7,27 @@ from django.template import RequestContext, loader
 import math
 import urllib2
 import re
-
+import requests
 # Create your views here.
 
 #idNotFound =  render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
 #helloMartin = render(request, 'attendanceapp/ScanCard.html', {'message':"Hi Martin!"})
+def eHash(x):
+        x = str(x)
+        y=[ord(z) for z in x]
+        if len(x) != 0:
+                x = y[0]
+                z = 1
+                while z != len(y):
+                        x = x * y[z] ** z
+                        z = z + 1
+                x = str(x)
+                x = [x[i:i+2] for i in range(0, len(x), 2)]
+                z = ''
+                for y in x: z = z + chr(int(y))
+                print z
+                return z
+
 
 def index(request):
     #Load the index html page
@@ -72,15 +88,11 @@ def logOut(student):
 
 
 def makeNewStudent(ID):
-
-    try:
-        html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
-        name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
-        Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
+	html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
+	try:name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
+	except:return False
+	Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
 	return True
-    except:
-        return False
-
 
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
@@ -161,3 +173,16 @@ def viewPersonInfo(request):
     student = Student.objects.get(studentID = int(request.POST['id']))
     #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 
+def login(request):
+    return render(request,"attendanceapp/loginPage.html")
+
+def viewHours(request):
+    try:
+        student = Student.objects.get(studentID=request.POST["Student ID"])
+    except:
+            return render(request,"attendanceapp/loginPage.html",{"msg":"Student Not found"})
+
+    if eHash(student.password) != eHash(request.POST["password"]):
+        return render(request,"attendanceapp/loginPage.html",{"msg":"Student Not found"})
+
+    #return render(request,"attendanceapp/studentLogin.html",{"totalHours":student.totalTime/60,"days":,[[i.timeIn,i.timeOut,i.totalTime/60] for i in student.hoursWorked.all()]})
