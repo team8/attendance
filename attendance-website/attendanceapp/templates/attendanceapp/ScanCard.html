@@ -1,6 +1,7 @@
 {% load staticfiles %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'attendanceapp/style.css' %}" />
+<link rel="stylesheet" type="text/css"
+href="{% static 'attendanceapp/style.css' %}" />
 
 <html>
 <head>
@@ -17,7 +18,10 @@
 
     <form action="{% url 'ScanCard' %}" method="post">
       {% csrf_token %}
-      <input type="text" id="cardBox" name="studentID" autofocus>
+      <input type="text" id="cardBox" name="studentID" autofocus pattern=".{8}|.{14}"
+      required title="Either 8 or 14 characters.
+      If this is Martin, your ID is currently 8 digits long, I'm working on
+      making it 4">
       <input type="submit" value="Log in/out">
     </form>
 
