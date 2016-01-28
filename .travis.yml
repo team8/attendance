@@ -11,7 +11,7 @@ notifications:
     on_success: always
 
 #Command to install dependencies
-install: "pip install -r requirements.txt"
+install: "pip install -r attendance-website\requirements.txt"
 
 #Compile all python files
 script:
