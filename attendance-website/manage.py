@@ -12,6 +12,8 @@ if __name__ == "__main__":
 
     if AUTOLOGOUTENABLED:
         import autoLogout
-        threading.Thread(target=autoLogout.main).start()
+        t = threading.Thread(target=autoLogout.main)
+        t.daemon = True
+        t.start()
 
     execute_from_command_line(sys.argv)
