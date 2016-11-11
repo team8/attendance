@@ -23,10 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ii@k+ki-zf#&hp(6r^t1w%je3%hz)uz(!xwphe2b8#zoxoeed)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = [".pturnbull.me"]
-
+ALLOWED_HOSTS = ["server.palyrobotics.com"]
+LOGIN_REDIRECT_URL = "/"
 
 # Application definition
 
@@ -50,6 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+	'attendance.middleware.auth.RequireLoginMiddleware'
 )
 
 ROOT_URLCONF = 'attendance.urls'
@@ -65,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+				'django.core.context_processors.static',
             ],
         },
     },
@@ -103,3 +105,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+LOGIN_REQUIRED_URLS = (
+	r'/viewPeopleInfo/(.*)$',
+	r'/ScanCard/(.*)$',
+)
+LOGIN_REQUIRED_URLS_EXCEPTIONS = (
+	
+)

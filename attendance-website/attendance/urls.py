@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+import django.contrib.auth.views
 from attendanceapp import views
+from django.conf import settings
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='Index'),
+	url(r'^accounts/login/$', 'django.contrib.auth.views.login',name="login"),
     url(r'^ScanCard/$', views.logInPage, name='ScanCard'),
     url(r'^PeopleInLab/$', views.whoIsInLab, name='PeopleInLab'),
     url(r'^PersonInLab/$', views.specificPersonInLab, name='PersonInLab'),

@@ -1,0 +1,16 @@
+#page-wrap {
+  width: 800px;
+  margin: 10 auto;
+  /* background-image: url(images/circuitBoard.png); */
+  background-color: #FFFFFF;
+  text-align: center;
+}
+
+#header {
+  height: 83px;
+  width: 100%;
+  text-align: center;
+  background-image: url(images/roboticsHeader.jpg);
+  background-size: 800px 83px;
+  background-repeat: no-repeat;
+}

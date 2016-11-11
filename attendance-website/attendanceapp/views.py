@@ -3,6 +3,8 @@ from attendanceapp.models import Subteam, HoursWorked, Student
 from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
+from django.contrib.auth.decorators import login_required
+from operator import itemgetter
 
 import math
 import urllib2
@@ -146,18 +148,37 @@ def specificPersonInLab(request):
 def viewPeoplePWPage(request):
     print request.POST
     return render(request, "attendanceapp/viewPeoplePwPage.html")
-
-def viewPeopleInfo(request):
-    # print "HELLO!!!!"
-    # print request.POST["password"]
-    # if request.POST['password'] == "thepassword":
-        students = []
-        for student in Student.objects.all():
-            students.append([student.name,student.subteam.name,student.totalTime/60,student.studentID,[[i.timeIn,i.timeOut,i.totalTime/60] for i in student.hoursWorked.all()]])
-        return render(request,"attendanceapp/viewPeopleHours.html",{"peopleInfo":students})
-    # else: return viewPeoplePWPage(request)
+@login_required
+def viewPeopleInfo(request, chartID = "chart_ID", chart_type = "column", chart_height = 500):
+	names, hours = check_data()
+	chart = {"renderTo": chartID, "type": chart_type, "height": chart_height,}
+	title = {"text": "Student Hours"}
+	xAxis = {"categories": names, "labels": {"rotation": 90}}
+	yAxis = {"title": {"text": 'Hours'}}
+	series = [
+		{'name': 'Hours', 'data': hours}
+	]
+	return render(request, 'attendanceapp/viewPeopleHours.html', {'chartID': chartID, 'chart': chart,
+                                                    'series': series, 'title': title, 
+                                                    'xAxis': xAxis, 'yAxis': yAxis})
 
 def viewPersonInfo(request):
     student = Student.objects.get(studentID = int(request.POST['id']))
     #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
-
+	
+def check_data():
+	data = {}
+	sorteddata = {}
+	names = []
+	hours= []
+	students = Student.objects.all()
+	for student in students:
+		#data['name'].append(str(student.name))
+		#data['hours'].append(student.totalTime/60)
+		names.append(str(student.name))
+		hours.append(student.totalTime/60)
+		data = zip(names, hours)
+	sorteddata = zip(*sorted(data, key=itemgetter(1), reverse=True))
+	names = list(sorteddata[0])
+	hours = list(sorteddata[1])
+	return names, hours
