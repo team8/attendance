@@ -5,6 +5,9 @@ from django.utils import timezone
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from operator import itemgetter
+from forms import SubteamForm
+from attendanceapp.tables import StudentTable
+from django_tables2 import RequestConfig
 
 import math
 import urllib2
@@ -148,8 +151,14 @@ def specificPersonInLab(request):
 def viewPeoplePWPage(request):
     print request.POST
     return render(request, "attendanceapp/viewPeoplePwPage.html")
-@login_required
+	
 def viewPeopleInfo(request, chartID = "chart_ID", chart_type = "column", chart_height = 500):
+	if request.method == "POST":
+		form = SubteamForm(request.POST)
+		if form.is_valid():
+			print("haha lol")
+	else:
+		form = SubteamForm()
 	names, hours = check_data()
 	chart = {"renderTo": chartID, "type": chart_type, "height": chart_height,}
 	title = {"text": "Student Hours"}
@@ -166,6 +175,11 @@ def viewPersonInfo(request):
     student = Student.objects.get(studentID = int(request.POST['id']))
     #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 	
+def leaderboard(request):
+	table = StudentTable(Student.objects.order_by("-totalTime"))
+	RequestConfig(request).configure(table)
+	return render(request, "attendanceapp/leaderboard.html", {'students': table})
+		
 def check_data():
 	data = {}
 	sorteddata = {}

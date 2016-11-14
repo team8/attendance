@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^viewPeoplePWPage/$',views.viewPeoplePWPage,name="viewPeoplePWPage"),
     url(r'^viewPeopleInfo/$',views.viewPeopleInfo,name="viewPeopleInfo"),
     url(r'^viewPersonInfo/$',views.viewPersonInfo,name="viewPersonInfo"),
+	url(r'^leaderboard/$',views.leaderboard, name="leaderboard"),
 ]
