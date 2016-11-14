@@ -12,6 +12,7 @@ from django_tables2 import RequestConfig
 import math
 import urllib2
 import re
+import datetime
 
 # Create your views here.
 
@@ -57,16 +58,17 @@ def logOut(student):
     #Get the time they were in the lab and convert it from seconds to minutes
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
-
+    hoursWorked = minutesWorked/60
+    now = datetime.datetime.now()
     #Create the "Time worked" object to be added to the student database
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,timeOut=timeNow, totalTime=minutesWorked)
+    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked)
     timeWorked.save()
 
     #add the time worked object to the student so it can be viewed in the calander
     student.hoursWorked.add(timeWorked)
 
     #add the minutes to the student's total time
-    student.totalTime+=minutesWorked
+    student.totalTime+=hoursWorked
 
     #Save the student object
     student.save()
