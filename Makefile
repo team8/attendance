@@ -1,5 +1,4 @@
 test:
-	 python -m py_compile attendance-website/autoLogout.py
 	 python -m py_compile attendance-website/manage.py
 	 python -m py_compile attendance-website/attendance/urls.py
 	 python -m py_compile attendance-website/attendance/wsgi.py
