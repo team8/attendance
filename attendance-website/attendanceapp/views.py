@@ -58,7 +58,7 @@ def logOut(student):
     #Get the time they were in the lab and convert it from seconds to minutes
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
-    hoursWorked = minutesWorked/60
+    hoursWorked = round(minutesWorked/60, 2)
     now = datetime.datetime.now()
     #Create the "Time worked" object to be added to the student database
     timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked)
@@ -68,7 +68,7 @@ def logOut(student):
     student.hoursWorked.add(timeWorked)
 
     #add the minutes to the student's total time
-    student.totalTime+=hoursWorked
+    student.totalTime+= hoursWorked
 
     #Save the student object
     student.save()
@@ -192,7 +192,7 @@ def check_data():
 		#data['name'].append(str(student.name))
 		#data['hours'].append(student.totalTime/60)
 		names.append(str(student.name))
-		hours.append(student.totalTime/60)
+		hours.append(student.totalTime)
 		data = zip(names, hours)
 	sorteddata = zip(*sorted(data, key=itemgetter(1), reverse=True))
 	names = list(sorteddata[0])
