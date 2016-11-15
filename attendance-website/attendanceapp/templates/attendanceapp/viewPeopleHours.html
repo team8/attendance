@@ -1,8 +1,8 @@
-<form action="/your-name/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+<!-- <form action="/your-name/" method="post"> -->
+    <!-- {% csrf_token %} -->
+    <!-- {{ form }} -->
+    <!-- <input type="submit" value="Submit" /> -->
+<!-- </form> -->
 
 {% block extrahead %}
     <!-- Load in jQuery and HighCharts -->
@@ -18,10 +18,6 @@
     <div id={{ chartID|safe }} class="chart" style="height:100px; width:100%"></div>
 {% endblock %}
 
-{% block overwrite %}
-<!-- Overwrite the base.html jQuery load and put in head for Highcharts to work -->
-{% endblock %}
-
 {% block extrajs %}
 <!-- Maps the Python template context variables from views.py to the Highchart js variables -->
 <script>
@@ -29,7 +25,6 @@
     var chart = {{ chart|safe }}
     var title = {{ title|safe }}
     var xAxis = {{ xAxis|safe }}
-	console.log(xAxis);
     var yAxis = {{ yAxis|safe }}
     var series = {{ series|safe }}
 </script>
