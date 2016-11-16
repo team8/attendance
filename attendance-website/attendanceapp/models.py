@@ -28,5 +28,5 @@ class Student(models.Model):
     def __str__(self):
         return self.name
 class LabHours(models.Model):
-	day = models.CharField(default="None", max_length = 25)
-	hours = models.TimeField(default = datetime.time(0, 0, 0))
+	name = models.CharField(default="None", max_length = 25)
+	hours = models.DateTimeField()
