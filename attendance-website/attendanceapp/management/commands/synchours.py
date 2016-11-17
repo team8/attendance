@@ -25,4 +25,4 @@ class Command(BaseCommand):
 		for event in events['items']:
 			if event['summary'].startswith("LAB OPEN"):
 				print (event['summary'] + " " + event['end'].get("dateTime"))
-				LabHours.objects.create(name=event['summary'], hours=event['end'].get("dateTime"))
+				LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime"))

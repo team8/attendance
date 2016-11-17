@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 	
 		#hehe ecks dee deal with google calendar utc format
-		utctime = LabHours.objects.order_by("hours").first().hours
+		utctime = LabHours.objects.order_by("endtime").first().endtime
 		timestamp = calendar.timegm(utctime.timetuple())
 		local_dt = datetime.fromtimestamp(timestamp)
 		assert utctime.resolution >= timedelta(microseconds=1)
@@ -22,5 +22,5 @@ class Command(BaseCommand):
 		if (realhours + timedelta(hours=2)) < now:
 			everyone = Student.objects.filter(atLab = True)
 			for student in everyone:
-				logOut(student, False, True)
-			LabHours.objects.order_by("hours").first().delete()
+				logOut(student, False, True, True)
+			LabHours.objects.order_by("endtime").first().delete()
