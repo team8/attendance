@@ -132,7 +132,7 @@ def logInPage(request):
         if convertTime(LabHours.objects.order_by("starttime").first().starttime) > now:
             minutes = logOut(student, True, False, True)
             timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
-            return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job!...but you logged out outside of lab hours :("})
+            return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job, it's not currently lab hours."})
         else:
             minutes = logOut(student, True, False, False)
             timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
@@ -141,7 +141,7 @@ def logInPage(request):
     else:
         logIn(student)
         if convertTime(LabHours.objects.order_by("starttime").first().starttime) > now:
-            return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!...but it's outside lab hours"})
+            return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you outside lab hours"})
         else:
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
 

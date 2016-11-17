@@ -17,6 +17,7 @@ local.properties
 .loadpath
 *.sqlite3
 *.json
+*.sh
 
 # External tool builders
 .externalToolBuilders/
