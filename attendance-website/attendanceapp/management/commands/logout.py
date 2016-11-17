@@ -18,9 +18,9 @@ class Command(BaseCommand):
 		realhours = local_dt.replace(microsecond=utctime.microsecond)
 		
 		now = datetime.now()
-		
-		if realhours < now:
+        
+		if (realhours + timedelta(hours=2)) < now:
 			everyone = Student.objects.filter(atLab = True)
 			for student in everyone:
-				logOut(student, False)
+				logOut(student, False, True)
 			LabHours.objects.order_by("hours").first().delete()

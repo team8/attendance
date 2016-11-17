@@ -41,7 +41,7 @@ def logIn(student):
     student.save()
 
 
-def logOut(student, save):
+def logOut(student, save, autolog):
     #Tell the system that the student is no longer in the lab
     student.atLab=False
 
@@ -64,7 +64,7 @@ def logOut(student, save):
         hoursWorked=0.0
     now = datetime.datetime.now()
     #Create the "Time worked" object to be added to the student database
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked)
+    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog)
     timeWorked.save()
 
     #add the time worked object to the student so it can be viewed in the calander
@@ -124,7 +124,7 @@ def logInPage(request):
 
     if student.atLab==True:
 
-        minutes = logOut(student, True)
+        minutes = logOut(student, True, False)
         timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
         return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job!"})
 
