@@ -3,9 +3,11 @@ from django.core.management.base import BaseCommand, CommandError
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
-from attendanceapp.models import LabHours
+from attendanceapp.models import LabHours, OverallStats
 from datetime import datetime
+from attendanceapp.util import utc_to_normal
 import urllib
+import re
 
 class Command(BaseCommand):
 	help = 'updates the lab hours weekly'
@@ -24,5 +26,15 @@ class Command(BaseCommand):
 		events = CAL.events().list(calendarId="db25n7oev1at726gljle5d784c@group.calendar.google.com", singleEvents = True, timeMin = datetime_phrase).execute()
 		for event in events['items']:
 			if event['summary'].startswith("LAB OPEN"):
-				print (event['summary'] + " " + event['end'].get("dateTime"))
-				LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime"))
+				LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime"), totalTime = getTimeDiff(event))
+def getTimeDiff(event):
+    a = event['start'].get('dateTime').replace(' ', '')[:-6]
+    b = event['end'].get('dateTime').replace(' ', '')[:-6]
+    aobj = datetime.strptime(a, '%Y-%m-%dT%H:%M:%S')
+    bobj = datetime.strptime(b, '%Y-%m-%dT%H:%M:%S')
+    c = bobj-aobj
+    minutes, seconds = divmod(c.total_seconds(), 60)
+    hours, minutes = divmod(minutes, 60)
+    minutesdecimal = minutes/60
+    result = hours+minutesdecimal
+    return result

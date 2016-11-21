@@ -6,5 +6,5 @@ class StudentTable(tables.Table):
 		model = Student
 		#attrs = {"class": "name"}
 		#row_attrs = {"data-id": lambda record: record.pk}
-		exclude=("lastLoggedIn", "atLab", "studentID", "id")
+		exclude=("lastLoggedIn", "atLab", "studentID", "id", "averageTime", "stddevTime", "daysWorked", "percentDaysWorked", "averagePercentTimeWeighted", "stddevPercentTimeWeighted", "mostFrequentDay")
 		per_page = "100"

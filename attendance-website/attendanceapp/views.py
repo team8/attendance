@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from attendanceapp.models import Subteam, HoursWorked, Student, LabHours
+from attendanceapp.models import Subteam, HoursWorked, Student, LabHours, OverallStats
 from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
@@ -9,11 +9,11 @@ from forms import SubteamForm
 from attendanceapp.tables import StudentTable
 from django_tables2 import RequestConfig
 from datetime import datetime, timedelta
+from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day
 
 import math
 import urllib2
 import re
-import calendar
 
 # Create your views here.
 
@@ -60,23 +60,38 @@ def logOut(student, save, autolog, outsidelabhours):
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
     if(save):
-        hoursWorked = round(minutesWorked/60, 2)
+        hoursWorked = round(minutesWorked/60, 3)
     else:
         hoursWorked=0.0
     now = datetime.now()
     #Create the "Time worked" object to be added to the student database
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours)
+    weights = 0
+    hourspct = 0
+    if not outsidelabhours:
+        weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
+        hourspct = hoursWorked / weights
+    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
     timeWorked.save()
 
     #add the time worked object to the student so it can be viewed in the calander
     student.hoursWorked.add(timeWorked)
     #add the minutes to the student's total time
+    student.save()
     student.totalTime+= hoursWorked
-
+    average, stddev = weighted_average_and_stddev(student)
+    overallavg, overallstddev = student_overall_stats(student)
+    totaldays, hahalol = get_total_days(student)
+    percentdays = get_percent_days(student)
+    mostday = most_frequent_day(student)
+    student.mostFrequentDay = mostday
+    student.percentDaysWorked = percentdays
+    student.daysWorked = totaldays
+    student.averageTime = overallavg
+    student.stddevTime = overallstddev
+    student.averagePercentTimeWeighted = average
+    student.stddevPercentTimeWeighted = stddev
     #Save the student object
     student.save()
-
-
     #Return the number of minutes
     return minutesWorked
 
@@ -90,13 +105,6 @@ def makeNewStudent(ID):
 	return True
     except:
         return False
-        
-def convertTime(time):
-    timestamp = calendar.timegm(time.timetuple())
-    local_dt = datetime.fromtimestamp(timestamp)
-    assert time.resolution >= timedelta(microseconds=1)
-    realhours = local_dt.replace(microsecond=time.microsecond)
-    return realhours
     
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
@@ -129,7 +137,8 @@ def logInPage(request):
             student=Student.objects.get(studentID=studentID)
     now = datetime.now()
     if student.atLab==True:
-        if convertTime(LabHours.objects.order_by("starttime").first().starttime) > now:
+        print convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime)
+        if convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime) > now:
             minutes = logOut(student, True, False, True)
             timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job, it's not currently lab hours."})
@@ -196,20 +205,3 @@ def leaderboard(request):
 	table = StudentTable(Student.objects.order_by("-totalTime"))
 	RequestConfig(request).configure(table)
 	return render(request, "attendanceapp/leaderboard.html", {'students': table})
-		
-def check_data():
-	data = {}
-	sorteddata = {}
-	names = []
-	hours= []
-	students = Student.objects.all()
-	for student in students:
-		#data['name'].append(str(student.name))
-		#data['hours'].append(student.totalTime/60)
-		names.append(str(student.name))
-		hours.append(student.totalTime)
-		data = zip(names, hours)
-	sorteddata = zip(*sorted(data, key=itemgetter(1), reverse=True))
-	names = list(sorteddata[0])
-	hours = list(sorteddata[1])
-	return names, hours
