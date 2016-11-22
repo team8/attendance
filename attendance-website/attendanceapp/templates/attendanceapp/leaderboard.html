@@ -3,9 +3,12 @@
 <!doctype html>
 <link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
 <html>
-	<title>
-		Leaderboard
-	</title>
+    <head>
+         <link rel="stylesheet"  href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+         <title>
+            Leaderboard
+         </title>
+    </head>
 	<body>
 		{% render_table students %}
 	</body>

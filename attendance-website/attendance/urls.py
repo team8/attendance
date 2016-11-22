@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^viewPeopleInfo/$',views.viewPeopleInfo,name="viewPeopleInfo"),
     url(r'^viewPersonInfo/$',views.viewPersonInfo,name="viewPersonInfo"),
 	url(r'^leaderboard/$',views.leaderboard, name="leaderboard"),
+    url(r'^viewPeopleStats/$', views.viewPeopleStats, name="viewPeopleStats"),
 ]

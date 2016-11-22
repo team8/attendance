@@ -6,7 +6,7 @@ from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from operator import itemgetter
 from forms import SubteamForm
-from attendanceapp.tables import StudentTable
+from attendanceapp.tables import StudentTable, StatTable
 from django_tables2 import RequestConfig
 from datetime import datetime, timedelta
 from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day
@@ -205,3 +205,8 @@ def leaderboard(request):
 	table = StudentTable(Student.objects.order_by("-totalTime"))
 	RequestConfig(request).configure(table)
 	return render(request, "attendanceapp/leaderboard.html", {'students': table})
+    
+def viewPeopleStats(request):
+    table = StatTable(Student.objects.order_by("-totalTime"))
+    RequestConfig(request).configure(table)
+    return render(request,"attendanceapp/viewPeopleStats.html",{"students":table})

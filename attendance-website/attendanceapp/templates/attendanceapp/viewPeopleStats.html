@@ -1,0 +1,55 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+<!doctype html>
+<link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
+<html>
+	<head>
+        <link rel="stylesheet"  href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+		<title>
+			View Everyone's Statistics
+		</title>
+	</head>
+
+	<!-- <body> -->
+
+        <!-- <h1> -->
+            <!-- Statistics -->
+        <!-- </h1> -->
+        <!-- {% for person in peopleInfo %} -->
+            
+        <!-- {% endfor %} -->
+        <!-- <div class="dropdown"> -->
+            <!-- <button onclick="toggleFunction()" class="dropbtn">Dropdown</button> -->
+            <!-- <div id="myDropdown" class="dropdown-content"> -->
+                <!-- <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()"> -->
+                    <!-- <a for="choice{{forloop.counter}}"> {{choice.name}}</a> -->
+            <!-- </div> -->
+        <!-- </div> -->
+
+	<!-- </body> -->
+    <!-- <script> -->
+        <!-- function toggleFunction() { -->
+            <!-- document.getElementById("myDropdown").classList.toggle("show"); -->
+        <!-- } -->
+
+        <!-- function filterFunction() { -->
+            <!-- var input, filter, ul, li, a, i; -->
+            <!-- input = document.getElementById("myInput"); -->
+            <!-- filter = input.value.toUpperCase(); -->
+            <!-- div = document.getElementById("myDropdown"); -->
+            <!-- a = div.getElementsByTagName("a"); -->
+            <!-- for (i = 0; i < a.length; i++) { -->
+                <!-- if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) { -->
+                    <!-- a[i].style.display = ""; -->
+                <!-- } else { -->
+                    <!-- a[i].style.display = "none"; -->
+                <!-- } -->
+            <!-- } -->
+        <!-- } -->
+    <!-- </script> -->
+    <body>
+        {% render_table students %}
+    </body>
+    
+    
+</html>
