@@ -62,7 +62,9 @@ def logOut(student, save, autolog, outsidelabhours):
     hourspct = 0
     if not outsidelabhours:
         weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
-        hourspct = hoursWorked / weights
+        hourspct = (hoursWorked / weights) * 100
+        if hourspct > 100:
+            hourspct = 100
     timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
     timeWorked.save()
 

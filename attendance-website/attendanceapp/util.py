@@ -87,6 +87,7 @@ def get_percent_days(student):
                 labdays = labdays + 1
         totallabdays = totallabdays + 1
     percent = labdays/totallabdays
+    percent *= 100
     return percent
     
 def most_frequent_day(student):
