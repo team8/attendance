@@ -18,35 +18,14 @@ href="{{ STATIC_URL }}attendanceapp/style.css" />
 
     <form action="{% url 'ScanCard' %}" method="post">
       {% csrf_token %}
-      <input type="text" id="cardBox" name="studentID" autofocus pattern=".{8}|.{14}"
-      required title="Either 8 or 14 characters.
-      If this is Martin, your ID is currently 8 digits long, I'm working on
-      making it 4">
+      <input type="text" id="cardBox" name="studentID" autofocus pattern=".{8}"
+      required title="8 Characters. ">
       <input type="submit" value="Log in/out">
     </form>
 
     {{ message }}
 
   </div>
-
-  <!--
-  <script type="text/javascript">
-    function logInOut() {
-
-      var cardID = document.getElementById('cardBox').value;
-      var form = createElement("form");
-      form.action = "http://127.0.0.1:8000/ScanCard/";
-      form.method = 'POST';
-      var input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "studentID";
-      input.value = cardID;
-      form.appendChild(input);
-      form.submit;
-
-    }
-  </script>
-  !-->
 
 </body>
 

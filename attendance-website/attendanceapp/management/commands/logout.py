@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import pytz
 import calendar
-#change this to run once a day at like 11:55pm or something since autologout does not save hours
+
 class Command(BaseCommand):
 
     help = 'automatically logs out students'

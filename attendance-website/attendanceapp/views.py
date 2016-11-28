@@ -17,9 +17,6 @@ import re
 
 # Create your views here.
 
-#idNotFound =  render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-#helloMartin = render(request, 'attendanceapp/ScanCard.html', {'message':"Hi Martin!"})
-
 def index(request):
     #Load the index html page
     template=loader.get_template('attendanceapp/index.html')
@@ -51,10 +48,6 @@ def logOut(student, save, autolog, outsidelabhours):
 
     #Get the time now so we get the most accurate  time in relation to when they logged in
     timeNow=timezone.now()
-
-    #print (timeNow-lastLoggedIn).total_seconds
-
-    #print type((timeNow-lastLoggedIn).total_seconds)
 
     #Get the time they were in the lab and convert it from seconds to minutes
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
@@ -111,33 +104,15 @@ def logInPage(request):
     #If this passes, that means a student is logging in/out
     #If this fails...???
 
-    try: studentID=request.POST['studentID']
-    except: return render(request, 'attendanceapp/ScanCard.html')
+    try: 
+        studentID=request.POST['studentID']
+    except: 
+        return render(request, 'attendanceapp/ScanCard.html')
 
-    #if len(studentID)==4:
-    #    if studentID=="8888":
-    #        #return helloMartin
-    #    else: return idNotFound
-
-    #Check to see if the inputted # meets the standard for ID# format. This
-    #should be encapsulated, but it may be redundant with the introduction of
-    #the HTML5 pattern attribute on the ScanCard page.
-    if len(studentID) != 8:
-        if len(studentID)==14:
-            studentID=studentID[5:13]
-        else: return idNotFound
-
-    try: student=Student.objects.get(studentID=studentID)
-
-    except:
-        if makeNewStudent(request.POST['studentID']) == False:
-            print "makeNewStudent failing"
-            return render(request, 'attendanceapp/ScanCard.html', {'message':"Sorry, student ID# not found."})
-        else:
-            student=Student.objects.get(studentID=studentID)
+    student=Student.objects.get(studentID=studentID)
+    
     now = datetime.now()
     if student.atLab==True:
-        print convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime)
         if convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime) > now:
             minutes = logOut(student, True, False, True)
             timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
