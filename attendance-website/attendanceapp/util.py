@@ -5,6 +5,7 @@ import operator
 import numpy as np
 import calendar
 import math
+import pytz
 
 def check_data():
 	data = {}
@@ -71,7 +72,7 @@ def get_total_days(student):
     totaldays = 1
     datearr = []
     for hours in student.hoursWorked.all():
-        if not hours.timeIn.date() == lastday.date():
+        if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
             totaldays += 1
             datearr.append(hours.timeIn.date())
         lastday = hours.timeIn
@@ -94,5 +95,9 @@ def most_frequent_day(student):
     dayarr = []
     for hours in student.hoursWorked.all():
         dayarr.append(hours.day)
-    day = max(set(dayarr), key=dayarr.count)
-    return day
+    filteredarr = filter(lambda a: a != "None", dayarr)
+    try:
+        day = max(set(filteredarr), key=filteredarr.count)
+        return day
+    except:
+        return "None"

@@ -20,14 +20,19 @@ class Command(BaseCommand):
         realhours = realhours.replace(tzinfo = (timezone('US/Pacific')))
         now = datetime.now(tz=pytz.utc)
         now = now.astimezone(timezone('US/Pacific'))
-        if realhours < now:
-            for person in Student.objects.all():
-                if person.lastLoggedIn.date() != now.date():
-                    worthlessHours = HoursWorked(timeIn=now,day = now.strftime("%A"),timeOut=now, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = 0.0)
+        oldtime = pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
+        
+        for person in Student.objects.all():
+            if LabHours.objects.filter(used = False).order_by("endtime").first().endtime.date() == now.date():
+                if person.lastLoggedIn != now.date():     
+                    worthlessHours = HoursWorked(timeIn=oldtime,day = "None",timeOut=oldtime, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = 0.0)
                     worthlessHours.save()
                     person.hoursWorked.add(worthlessHours)
-                elif person.atLab:
-                    logOut(person, False, True, True)
+                    person.save()
+            if person.atLab:
+                logOut(person, False, True, True)
+                
+        if realhours < now:   
             first = LabHours.objects.filter(used=False).order_by("endtime").first()
             first.used = True
             first.save()
