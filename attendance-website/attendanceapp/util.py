@@ -86,7 +86,8 @@ def get_percent_days(student):
         for date in datearr:
             if labhours.starttime.date() == date:
                 labdays = labdays + 1
-        totallabdays = totallabdays + 1
+            if labhours.starttime.date() <= datetime.now().date():
+                totallabdays += 1
     percent = labdays/totallabdays
     percent *= 100
     return percent
