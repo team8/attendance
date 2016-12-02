@@ -8,19 +8,20 @@ import math
 import pytz
 
 def check_data():
-	data = {}
-	sorteddata = {}
-	names = []
-	hours= []
-	students = Student.objects.all()
-	for student in students:
-		names.append(str(student.name))
-		hours.append(student.totalTime)
-		data = zip(names, hours)
-	sorteddata = zip(*sorted(data, key=operator.itemgetter(1), reverse=True))
-	names = list(sorteddata[0])
-	hours = list(sorteddata[1])
-	return names, hours
+    data = {}
+    sorteddata = {}
+    names = []
+    hours= []
+    students = Student.objects.all()
+    for student in students:
+        if student.totalTime != 0:
+            names.append(str(student.name))
+            hours.append(student.totalTime)
+            data = zip(names, hours)
+    sorteddata = zip(*sorted(data, key=operator.itemgetter(1), reverse=True))
+    names = list(sorteddata[0])
+    hours = list(sorteddata[1])
+    return names, hours
     
 def weighted_average_and_stddev(student):
     valuearr = np.array([])

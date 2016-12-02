@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from operator import itemgetter
 from forms import SubteamForm
 from attendanceapp.tables import StudentTable, StatTable
@@ -179,11 +180,11 @@ def viewPersonInfo(request):
     #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 	
 def leaderboard(request):
-	table = StudentTable(Student.objects.order_by("-totalTime"))
+	table = StudentTable(Student.objects.filter(~Q(totalTime = 0)).order_by("-totalTime"))
 	RequestConfig(request).configure(table)
 	return render(request, "attendanceapp/leaderboard.html", {'students': table})
     
 def viewPeopleStats(request):
-    table = StatTable(Student.objects.order_by("-totalTime"))
+    table = StatTable(Student.objects.filter(~Q(totalTime = 0)).order_by("-totalTime"))
     RequestConfig(request).configure(table)
     return render(request,"attendanceapp/viewPeopleStats.html",{"students":table})
