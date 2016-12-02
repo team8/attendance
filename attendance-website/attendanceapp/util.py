@@ -1,5 +1,5 @@
 from __future__ import division
-from attendanceapp.models import Student, LabHours
+from attendanceapp.models import Student, LabHours, Subteam
 from datetime import datetime, timedelta
 import operator
 import numpy as np
@@ -110,20 +110,47 @@ def subteam_avg_and_stddev_pct(team):
         if student.totalTime != 0:  
             valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
             
-    average = np.average(valuearr)
-    variance = np.average((valuearr - average)**2)
+    try:
+        average = np.average(valuearr, weights = weightarr)
+        variance = np.average((valuearr - average)**2, weights = weightarr)
+    except:
+        average = 0
+        variance = 0
     return (average, math.sqrt(variance))
     
 def subteam_total_and_fqt_days(team):
-    days = 0
+    days = 1
+    prevday = datetime.now().date()
     dayarr = []
     for student in Student.objects.filter(subteam=team):
-        days = days + student.daysWorked
+        prevday = student.hoursWorked.first().timeIn
         for hours in student.hoursWorked.all():
-            dayarr.append(hours.day)
+            if hours.timeIn.date() != prevday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
+                days = days + 1
+                dayarr.append(hours.day)
     filteredarr = filter(lambda a: a!= "None", dayarr)
     try:
         day = max(set(filteredarr), key=filteredarr.count)
         return days, day
     except:
         return days, "None"
+        
+def do_student_calcs(student):
+    average, stddev = weighted_average_and_stddev(student)
+    overallavg, overallstddev = student_overall_stats(student)
+    totaldays, hahalol = get_total_days(student)
+    percentdays = get_percent_days(student)
+    mostday = most_frequent_day(student)
+    student.mostFrequentDay = mostday
+    student.percentDaysWorked = percentdays
+    student.daysWorked = totaldays
+    student.averageTime = overallavg
+    student.stddevTime = overallstddev
+    student.averagePercentTimeWeighted = average
+    student.stddevPercentTimeWeighted = stddev
+    student.save()
+
+    for subteam in Subteam.objects.all():
+        subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
+        subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
+        subteam.save()

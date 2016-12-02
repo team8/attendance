@@ -6,7 +6,6 @@ class Command(BaseCommand):
     help = 'clears all hours and logs everyone out'
 	
     def handle(self, *args, **options):
-        HoursWorked.objects.all().delete()
         for person in Student.objects.all():
             if person.atLab:
                 logOut(person, False, False, False)
@@ -27,3 +26,4 @@ class Command(BaseCommand):
             subteam.mostFrequentDay = 0
             subteam.totalDaysWorked = 0
             subteam.save()
+        HoursWorked.objects.all().delete()

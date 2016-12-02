@@ -10,7 +10,7 @@ from forms import SubteamForm
 from attendanceapp.tables import StudentTable, StatTable, SubteamTable
 from django_tables2 import RequestConfig
 from datetime import datetime, timedelta
-from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days
+from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days, do_student_calcs
 
 import math
 import urllib2
@@ -53,47 +53,32 @@ def logOut(student, save, autolog, outsidelabhours):
     #Get the time they were in the lab and convert it from seconds to minutes
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
+    now = datetime.now()
     if(save):
         hoursWorked = round(minutesWorked/60, 3)
-    else:
-        hoursWorked=0.0
-    now = datetime.now()
-    #Create the "Time worked" object to be added to the student database
-    weights = 0
-    hourspct = 0
-    if not outsidelabhours:
-        weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
-        hourspct = (hoursWorked / weights) * 100
-        if hourspct > 100:
-            hourspct = 100
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
-    timeWorked.save()
+        #Create the "Time worked" object to be added to the student database
+        weights = 0
+        hourspct = 0
+        if not outsidelabhours:
+            weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
+            hourspct = (hoursWorked / weights) * 100
+            if hourspct > 100:
+                hourspct = 100
+        timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
+        timeWorked.save()
 
-    #add the time worked object to the student so it can be viewed in the calander
-    student.hoursWorked.add(timeWorked)
-    #add the minutes to the student's total time
-    student.save()
-    student.totalTime+= hoursWorked
-    average, stddev = weighted_average_and_stddev(student)
-    overallavg, overallstddev = student_overall_stats(student)
-    totaldays, hahalol = get_total_days(student)
-    percentdays = get_percent_days(student)
-    mostday = most_frequent_day(student)
-    student.mostFrequentDay = mostday
-    student.percentDaysWorked = percentdays
-    student.daysWorked = totaldays
-    student.averageTime = overallavg
-    student.stddevTime = overallstddev
-    student.averagePercentTimeWeighted = average
-    student.stddevPercentTimeWeighted = stddev
-    #Save the student object
-    student.save()
-    #Return the number of minutes
-    
-    subteam = student.subteam
-    subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
-    subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
-    subteam.save()
+        #add the time worked object to the student so it can be viewed in the calander
+        student.hoursWorked.add(timeWorked)
+        #add the minutes to the student's total time
+        student.totalTime+= hoursWorked
+        student.save()
+    else: 
+        worthlessHours = HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = 0)
+        worthlessHours.save()
+        student.hoursWorked.add(worthlessHours)
+        print "adding worthlessness xd"
+        student.save()
+    do_student_calcs(student)
     return minutesWorked
 
 
@@ -114,8 +99,9 @@ def logInPage(request):
 
     try: 
         studentID=request.POST['studentID']
+        Student.objects.get(studentID=studentID)
     except: 
-        return render(request, 'attendanceapp/ScanCard.html')
+        return render(request, 'attendanceapp/ScanCard.html', {'message': "Student ID number not recognized. "})
 
     student=Student.objects.get(studentID=studentID)
     
