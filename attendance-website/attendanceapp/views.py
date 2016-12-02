@@ -180,7 +180,7 @@ def viewPersonInfo(request):
     #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 	
 def leaderboard(request):
-	table = StudentTable(Student.objects.filter(~Q(totalTime = 0)).order_by("-totalTime"))
+	table = StudentTable(Student.objects.order_by("-totalTime"))
 	RequestConfig(request).configure(table)
 	return render(request, "attendanceapp/leaderboard.html", {'students': table})
     
