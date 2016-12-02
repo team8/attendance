@@ -103,3 +103,27 @@ def most_frequent_day(student):
         return day
     except:
         return "None"
+        
+def subteam_avg_and_stddev_pct(team):
+    valuearr = np.array([])
+    for student in Student.objects.filter(subteam=team):
+        if student.totalTime != 0:  
+            valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
+            
+    average = np.average(valuearr)
+    variance = np.average((valuearr - average)**2)
+    return (average, math.sqrt(variance))
+    
+def subteam_total_and_fqt_days(team):
+    days = 0
+    dayarr = []
+    for student in Student.objects.filter(subteam=team):
+        days = days + student.daysWorked
+        for hours in student.hoursWorked.all():
+            dayarr.append(hours.day)
+    filteredarr = filter(lambda a: a!= "None", dayarr)
+    try:
+        day = max(set(filteredarr), key=filteredarr.count)
+        return days, day
+    except:
+        return days, "None"

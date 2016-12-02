@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from attendanceapp.models import Student, HoursWorked
+from attendanceapp.models import Student, HoursWorked, Subteam
 from attendanceapp.views import logOut
 
 class Command(BaseCommand):
@@ -20,3 +20,10 @@ class Command(BaseCommand):
             person.mostFrequentDay = "None"
             person.hoursWorked.through.objects.all().delete()
             person.save()
+            
+        for subteam in Subteam.objects.all():
+            subteam.averagePercentTimeWeighted = 0
+            subteam.stddevPercentTimeWeighted = 0
+            subteam.mostFrequentDay = 0
+            subteam.totalDaysWorked = 0
+            subteam.save()

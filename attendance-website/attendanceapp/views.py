@@ -7,10 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from operator import itemgetter
 from forms import SubteamForm
-from attendanceapp.tables import StudentTable, StatTable
+from attendanceapp.tables import StudentTable, StatTable, SubteamTable
 from django_tables2 import RequestConfig
 from datetime import datetime, timedelta
-from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day
+from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days
 
 import math
 import urllib2
@@ -89,6 +89,11 @@ def logOut(student, save, autolog, outsidelabhours):
     #Save the student object
     student.save()
     #Return the number of minutes
+    
+    subteam = student.subteam
+    subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
+    subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
+    subteam.save()
     return minutesWorked
 
 
@@ -188,3 +193,8 @@ def viewPeopleStats(request):
     table = StatTable(Student.objects.filter(~Q(totalTime = 0)).order_by("-totalTime"))
     RequestConfig(request).configure(table)
     return render(request,"attendanceapp/viewPeopleStats.html",{"students":table})
+    
+def viewSubteamStats(request):
+    table = SubteamTable(Subteam.objects.all())
+    RequestConfig(request).configure(table)
+    return render(request,"attendanceapp/viewSubteamStats.html",{"subteams":table})

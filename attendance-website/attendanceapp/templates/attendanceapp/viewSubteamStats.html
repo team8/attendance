@@ -1,0 +1,17 @@
+{% load render_table from django_tables2 %}
+{% load static %}
+<!doctype html>
+<link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
+<html>
+	<head>
+        <link rel="stylesheet"  href="{{ STATIC_URL }}django_tables2/themes/paleblue/css/screen.css" />
+		<title>
+			View Subteam Statistics
+		</title>
+	</head>
+    <body>
+        {% render_table subteams %}
+    </body>
+    
+    
+</html>

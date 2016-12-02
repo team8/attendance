@@ -112,6 +112,7 @@ LOGIN_REQUIRED_URLS = (
 	r'/viewPeopleInfo/(.*)$',
 	r'/ScanCard/(.*)$',
     r'/viewPeopleStats/(.*)$',
+    r'/viewSubteamStats/(.*)$',
 )
 LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 	
