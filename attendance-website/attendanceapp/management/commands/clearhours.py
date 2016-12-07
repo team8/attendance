@@ -1,6 +1,8 @@
 from django.core.management.base import BaseCommand, CommandError
 from attendanceapp.models import Student, HoursWorked, Subteam
 from attendanceapp.views import logOut
+import datetime
+import pytz
 
 class Command(BaseCommand):
     help = 'clears all hours and logs everyone out'
@@ -9,6 +11,7 @@ class Command(BaseCommand):
         for person in Student.objects.all():
             if person.atLab:
                 logOut(person, False, False, False)
+            person.lastLoggedIn = pytz.utc.localize(datetime.datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
             person.totalTime = 0
             person.averageTime = 0
             person.stddevTime = 0

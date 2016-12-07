@@ -69,15 +69,18 @@ def student_overall_stats(student):
     return average, stddev
 
 def get_total_days(student):
-    lastday = student.hoursWorked.first().timeIn
-    totaldays = 1
-    datearr = []
-    for hours in student.hoursWorked.all():
-        if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
-            totaldays += 1
-            datearr.append(hours.timeIn.date())
-        lastday = hours.timeIn
-    return totaldays, datearr
+    if student.hoursWorked.first() is not None:
+        lastday = student.hoursWorked.first().timeIn
+        totaldays = 1
+        datearr = []
+        for hours in student.hoursWorked.all():
+            if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
+                totaldays += 1
+                datearr.append(hours.timeIn.date())
+            lastday = hours.timeIn
+            return totaldays, datearr
+    else:
+        return 0, []
     
 def get_percent_days(student):
     days, datearr = get_total_days(student)
@@ -123,11 +126,12 @@ def subteam_total_and_fqt_days(team):
     prevday = datetime.now().date()
     dayarr = []
     for student in Student.objects.filter(subteam=team):
-        prevday = student.hoursWorked.first().timeIn
-        for hours in student.hoursWorked.all():
-            if hours.timeIn.date() != prevday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
-                days = days + 1
-                dayarr.append(hours.day)
+        if student.hoursWorked.first() is not None:
+            prevday = student.hoursWorked.first().timeIn
+            for hours in student.hoursWorked.all():
+                if hours.timeIn.date() != prevday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
+                    days = days + 1
+                    dayarr.append(hours.day)
     filteredarr = filter(lambda a: a!= "None", dayarr)
     try:
         day = max(set(filteredarr), key=filteredarr.count)
