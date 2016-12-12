@@ -15,6 +15,8 @@ from util import check_data, convertTime, weighted_average_and_stddev, student_o
 import math
 import urllib2
 import re
+import logging
+import pytz
 
 # Create your views here.
 
@@ -60,7 +62,10 @@ def logOut(student, save, autolog, outsidelabhours):
         weights = 0
         hourspct = 0
         if not outsidelabhours:
-            weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
+            try:
+                weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
+            except:
+                weights = 0
             hourspct = (hoursWorked / weights) * 100
             if hourspct > 100:
                 hourspct = 100
@@ -71,12 +76,6 @@ def logOut(student, save, autolog, outsidelabhours):
         student.hoursWorked.add(timeWorked)
         #add the minutes to the student's total time
         student.totalTime+= hoursWorked
-        student.save()
-    else: 
-        worthlessHours = HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = 0)
-        worthlessHours.save()
-        student.hoursWorked.add(worthlessHours)
-        print "adding worthlessness xd"
         student.save()
     do_student_calcs(student)
     return minutesWorked
@@ -108,8 +107,12 @@ def logInPage(request):
         return render(request, 'attendanceapp/ScanCard.html', {'message': "Student ID number not recognized. "})
     
     now = datetime.now()
+    try:
+        labtime = convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime)
+    except:
+        labtime = datetime.strptime('Jan 1 2020  12:00AM', '%b %d %Y %I:%M%p')
     if student.atLab==True:
-        if convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime) > now:
+        if labtime > now:
             minutes = logOut(student, True, False, True)
             timeReturn = str(math.trunc(minutes/60)) + " hours, " + " and " + str(math.trunc(minutes%60)) + " minutes"
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + "! You worked " + timeReturn + ", great job, it's not currently lab hours."})
@@ -120,7 +123,7 @@ def logInPage(request):
 
     else:
         logIn(student)
-        if convertTime(LabHours.objects.filter(used = False).order_by("starttime").first().starttime) > now:
+        if labtime > now:
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you outside lab hours"})
         else:
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
