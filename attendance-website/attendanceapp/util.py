@@ -72,7 +72,7 @@ def get_total_days(student):
     if student.hoursWorked.first() is not None:
         lastday = student.hoursWorked.first().timeIn
         totaldays = 1
-        datearr = []
+        datearr = [student.hoursWorked.first().timeIn.date()]
         for hours in student.hoursWorked.all():
             if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
                 totaldays += 1
@@ -92,7 +92,10 @@ def get_percent_days(student):
                 labdays = labdays + 1
         if labhours.starttime.date() <= datetime.now().date():
             totallabdays += 1
-    percent = labdays/totallabdays
+    try:
+        percent = labdays/totallabdays
+    except:
+        percent = 0
     percent *= 100
     return percent
     
