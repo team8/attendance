@@ -77,7 +77,10 @@ def logOut(student, save, autolog, outsidelabhours):
         #add the minutes to the student's total time
         student.totalTime+= hoursWorked
         student.save()
-    do_student_calcs(student)
+    try:
+        do_student_calcs(student)
+    except:
+        return minutesWorked
     return minutesWorked
 
 
