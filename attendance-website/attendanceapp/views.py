@@ -56,6 +56,7 @@ def logOut(student, save, autolog, outsidelabhours):
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
     minutesWorked=minutesWorked/60
     now = datetime.now()
+    student.save()
     if(save):
         hoursWorked = round(minutesWorked/60, 3)
         #Create the "Time worked" object to be added to the student database
