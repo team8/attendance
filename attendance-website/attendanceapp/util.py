@@ -86,12 +86,11 @@ def get_percent_days(student):
     days, datearr = get_total_days(student)
     labdays = 0
     totallabdays = 0
-    for labhours in LabHours.objects.all():
+    for labhours in LabHours.objects.filter(used=True):
         for date in datearr:
             if labhours.starttime.date() == date:
                 labdays = labdays + 1
-        if labhours.starttime.date() <= datetime.now().date():
-            totallabdays += 1
+        totallabdays += 1
     try:
         percent = labdays/totallabdays
     except:

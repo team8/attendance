@@ -10,10 +10,9 @@ import calendar
 class Command(BaseCommand):
 
     help = 'automatically logs out students'
-	
     def handle(self, *args, **options):
         try:    
-            labtime = LabHours.objects.filter(used = False).order_by("endtime").first().endtime
+            labtime = LabHours.objects.filter(used = False).order_by("starttime").first().endtime
             timestamp = calendar.timegm(labtime.timetuple())
             local_dt = datetime.fromtimestamp(timestamp)
             assert labtime.resolution >= timedelta(microseconds=1)
@@ -26,13 +25,12 @@ class Command(BaseCommand):
         oldtime = pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
         
         for person in Student.objects.all():
-            if labtime.date() == datetime.now(tz=pytz.utc).astimezone(timezone('America/Los_Angeles')).date():
-                if person.lastLoggedIn != now.date() and not person.atLab:     
-                    worthlessHours = HoursWorked(timeIn=oldtime,day = "None",timeOut=oldtime, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = LabHours.objects.filter(used = False).order_by("endtime").first().totalTime)
-                    worthlessHours.save()
-                    person.hoursWorked.add(worthlessHours)
-                    person.save()
-                    do_student_calcs(person)
+            if person.lastLoggedIn is not now.date() and not person.atLab:    #change this after build season    
+                worthlessHours = HoursWorked(timeIn=oldtime,day = "None",timeOut=oldtime, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = LabHours.objects.filter(used = False).order_by("endtime").first().totalTime)
+                worthlessHours.save()
+                person.hoursWorked.add(worthlessHours)
+                person.save()
+                do_student_calcs(person)
             if person.atLab:
                 logOut(person, False, True, True)
         if labtime < now:   

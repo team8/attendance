@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from attendanceapp.models import Subteam, HoursWorked, Student, LabHours, OverallStats
 from django.http import HttpResponse
-from django.utils import timezone
 from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -10,6 +9,7 @@ from forms import SubteamForm
 from attendanceapp.tables import StudentTable, StatTable, SubteamTable
 from django_tables2 import RequestConfig
 from datetime import datetime, timedelta
+from pytz import timezone
 from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days, do_student_calcs
 
 import math
@@ -36,7 +36,7 @@ def logIn(student):
     student.atLab=True
 
     #Set the login time
-    student.lastLoggedIn=timezone.now()
+    student.lastLoggedIn=datetime.now(tz=pytz.utc).astimezone(timezone('America/Los_Angeles'))
 
     #Write to the database
     student.save()
@@ -50,7 +50,7 @@ def logOut(student, save, autolog, outsidelabhours):
     lastLoggedIn=student.lastLoggedIn
 
     #Get the time now so we get the most accurate  time in relation to when they logged in
-    timeNow=timezone.now()
+    timeNow=datetime.now(tz=pytz.utc).astimezone(timezone('America/Los_Angeles'))
 
     #Get the time they were in the lab and convert it from seconds to minutes
     minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
@@ -72,7 +72,6 @@ def logOut(student, save, autolog, outsidelabhours):
                 hourspct = 100
         timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
         timeWorked.save()
-
         #add the time worked object to the student so it can be viewed in the calander
         student.hoursWorked.add(timeWorked)
         #add the minutes to the student's total time
