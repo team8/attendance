@@ -64,8 +64,13 @@ def student_overall_stats(student):
     hourarr = np.array([])
     for hours in student.hoursWorked.all():
         hourarr = np.append(hourarr, hours.totalTime)
-    average = np.average(hourarr)
-    stddev = np.std(hourarr)
+    print hourarr
+    if hourarr.size != 0:  
+        average = np.average(hourarr)
+        stddev = np.std(hourarr)
+    else:
+        average = 0
+        stddev = 0
     return average, stddev
 
 def get_total_days(student):
