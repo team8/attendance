@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 do_student_calcs(person)
             if person.atLab:
                 logOut(person, False, True, True)
+            do_student_calcs(person)
         if labtime < now:   
             first = LabHours.objects.filter(used=False).order_by("endtime").first()
             first.used = True

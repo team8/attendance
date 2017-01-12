@@ -74,23 +74,27 @@ def get_total_days(student):
         totaldays = 1
         datearr = [student.hoursWorked.first().timeIn.date()]
         for hours in student.hoursWorked.all():
-            if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
+            if hours.timeIn.date() != lastday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')).date():
                 totaldays += 1
-                datearr.append(hours.timeIn.date())
+                if not hours.timeIn.date() in datearr:
+                    datearr.append(hours.timeIn.date())
             lastday = hours.timeIn
-            return totaldays, datearr
+        return totaldays, datearr
     else:
         return 0, []
     
 def get_percent_days(student):
     days, datearr = get_total_days(student)
     labdays = 0
-    totallabdays = 0
-    for labhours in LabHours.objects.filter(used=True):
-        for date in datearr:
-            if labhours.starttime.date() == date:
-                labdays = labdays + 1
-        totallabdays += 1
+    totallabdays = 1 #1 because they dont get set to used until 11:55 pm
+    labdayarr = []
+    for labhours in LabHours.objects.all():
+        if labhours.used:
+            totallabdays += 1
+        labdayarr.append(labhours.starttime.date())
+    for date in datearr:
+        if date in labdayarr:
+            labdays = labdays + 1
     try:
         percent = labdays/totallabdays
     except:
@@ -111,16 +115,10 @@ def most_frequent_day(student):
         
 def subteam_avg_and_stddev_pct(team):
     valuearr = np.array([])
-    for student in Student.objects.filter(subteam=team):
-        if student.totalTime != 0:  
-            valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
-            
-    try:
-        average = np.average(valuearr, weights = weightarr)
-        variance = np.average((valuearr - average)**2, weights = weightarr)
-    except:
-        average = 0
-        variance = 0
+    for student in Student.objects.filter(subteam=team): 
+        valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
+    average = np.average(valuearr)
+    variance = np.average((valuearr - average)**2)
     return (average, math.sqrt(variance))
     
 def subteam_total_and_fqt_days(team):
@@ -131,7 +129,7 @@ def subteam_total_and_fqt_days(team):
         if student.hoursWorked.first() is not None:
             prevday = student.hoursWorked.first().timeIn
             for hours in student.hoursWorked.all():
-                if hours.timeIn.date() != prevday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')):
+                if hours.timeIn.date() != prevday.date() and hours.timeIn.date() != pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')).date():
                     days = days + 1
                     dayarr.append(hours.day)
     filteredarr = filter(lambda a: a!= "None", dayarr)
