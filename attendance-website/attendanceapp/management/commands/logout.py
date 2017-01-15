@@ -25,12 +25,11 @@ class Command(BaseCommand):
         oldtime = pytz.utc.localize(datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
         
         for person in Student.objects.all():
-            if person.lastLoggedIn is not now.date() and not person.atLab:    #change this after build season    
+            if (person.lastLoggedIn.date() != now.date()) and (not person.atLab):    #change this after build season   
                 worthlessHours = HoursWorked(timeIn=oldtime,day = "None",timeOut=oldtime, totalTime=0.0, autoLogout=True, outsideLabHours = True, weight = LabHours.objects.filter(used = False).order_by("endtime").first().totalTime)
                 worthlessHours.save()
                 person.hoursWorked.add(worthlessHours)
                 person.save()
-                do_student_calcs(person)
             if person.atLab:
                 logOut(person, False, True, True)
             do_student_calcs(person)

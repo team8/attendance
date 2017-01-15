@@ -27,7 +27,7 @@ class Command(BaseCommand):
         events = CAL.events().list(calendarId="db25n7oev1at726gljle5d784c@group.calendar.google.com", singleEvents = True, timeMin = datetime_phrase, timeMax = week_from_now).execute()
         for event in events['items']:
             if event['summary'].startswith("LAB OPEN"):
-                LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime"), totalTime = getTimeDiff(event))
+                LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime")+timedelta(hours=1), totalTime = getTimeDiff(event))
 def getTimeDiff(event):
     a = event['start'].get('dateTime').replace(' ', '')[:-6]
     b = event['end'].get('dateTime').replace(' ', '')[:-6]
@@ -37,5 +37,5 @@ def getTimeDiff(event):
     minutes, seconds = divmod(c.total_seconds(), 60)
     hours, minutes = divmod(minutes, 60)
     minutesdecimal = minutes/60
-    result = hours+minutesdecimal
+    result = hours+minutesdecimal+1
     return result
