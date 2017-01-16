@@ -2,6 +2,7 @@ from __future__ import print_function
 from django.core.management.base import BaseCommand, CommandError
 from apiclient.discovery import build
 from httplib2 import Http
+from pytz import timezone
 from oauth2client import file, client, tools
 from attendanceapp.models import LabHours, OverallStats
 from datetime import datetime, timedelta
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         events = CAL.events().list(calendarId="db25n7oev1at726gljle5d784c@group.calendar.google.com", singleEvents = True, timeMin = datetime_phrase, timeMax = week_from_now).execute()
         for event in events['items']:
             if event['summary'].startswith("LAB OPEN"):
-                LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=event['end'].get("dateTime")+timedelta(hours=1), totalTime = getTimeDiff(event))
+                LabHours.objects.create(name=event['summary'], starttime = event['start'].get("dateTime"), endtime=(datetime.strptime(event['end'].get('dateTime').replace(' ', '')[:-6], '%Y-%m-%dT%H:%M:%S')+timedelta(minutes=67)).replace(tzinfo=timezone("America/Los_Angeles")), totalTime = getTimeDiff(event))
 def getTimeDiff(event):
     a = event['start'].get('dateTime').replace(' ', '')[:-6]
     b = event['end'].get('dateTime').replace(' ', '')[:-6]
