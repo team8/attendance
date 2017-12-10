@@ -128,30 +128,6 @@ def logInPage(request):
         else:
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
 
-#This is part of our Slack Integration.
-#This one is supposed to return a list of people currently in the lab.
-#Slack will send a payload through POST.
-#We have to interpret it and send a response back. Not implemented (yet).
-def whoIsInLab(request):
-    try:
-        pass
-    except Exception as e:
-        raise
-
-
-#This is part of our Slack Integration.
-#Same technical details as above, this one will return true/false depending on whether the specific person requested is in the lab or not. Not implemented (yet).
-def specificPersonInLab(request):
-    try:
-        ID = request.POST['studentID']
-    except KeyError:
-        return
-    student=Student.objects.get(studentID=ID)
-
-def viewPeoplePWPage(request):
-    print request.POST
-    return render(request, "attendanceapp/viewPeoplePwPage.html")
-	
 def viewPeopleInfo(request, chartID = "chart_ID", chart_type = "column", chart_height = 500):
 	if request.method == "POST":
 		form = SubteamForm(request.POST)
@@ -170,10 +146,6 @@ def viewPeopleInfo(request, chartID = "chart_ID", chart_type = "column", chart_h
 	return render(request, 'attendanceapp/viewPeopleHours.html', {'chartID': chartID, 'chart': chart,
                                                     'series': series, 'title': title, 
                                                     'xAxis': xAxis, 'yAxis': yAxis})
-
-def viewPersonInfo(request):
-    student = Student.objects.get(studentID = int(request.POST['id']))
-    #return render(request,"attendanceapp/viewPersonInfo.html",{"name":student.name,"subteam":student.subteam.name,"hours":[i.timeIn,i.timeOut,i.totalTime for i in student.hoursWorked]})
 	
 def leaderboard(request):
 	table = StudentTable(Student.objects.order_by("-totalTime"))
