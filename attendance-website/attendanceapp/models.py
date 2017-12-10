@@ -30,7 +30,7 @@ class Student(models.Model):
     studentID = models.IntegerField() #The student's ID#. In the future this may end up being a robotics ID#, if we decide to make custom ID cards
     subteam = models.ForeignKey(Subteam) #What subteam the student is associated with. There are a few fringe cases (most notably the team captain), we should decide how we want to handle those.
     hoursWorked = models.ManyToManyField(HoursWorked, blank=True)
-    lastLoggedIn = models.DateTimeField(default = pytz.utc.localize(datetime.datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))) #Attribute that displays the last time this student logged in.
+    lastLoggedIn = models.DateTimeField(default = datetime.datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p')) #Attribute that displays the last time this student logged in.
     atLab = models.BooleanField(default=False) #Boolean attribute that tells us if the student is at the lab.
     totalTime = models.FloatField(default=0)  #Attribute that...again, we need clarity on this one
     averageTime = models.FloatField(default = 0) #average overall
@@ -43,12 +43,16 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+
 class LabHours(models.Model):
     name = models.CharField(default="None", max_length = 50)
     starttime = models.DateTimeField()
     endtime = models.DateTimeField()
     used = models.BooleanField(default = False)
     totalTime = models.FloatField(default = 0)
+    
+    def __str__(self):
+        return self.name
     
 class OverallStats(models.Model):
     name = models.CharField(default = "Overall Stats", max_length = 25)

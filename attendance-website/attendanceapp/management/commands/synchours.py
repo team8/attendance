@@ -23,19 +23,21 @@ class Command(BaseCommand):
     	
     		starttime = datetime.combine(datetime.strptime(x['Date'], "%m/%d/%Y").date(), datetime.strptime(x['Start Time'], "%I:%M %p").time())
     		endtime = datetime.combine(datetime.strptime(x['Date'], "%m/%d/%Y").date(), datetime.strptime(x['End Time'], "%I:%M %p").time())
-    		
+    		name = x['Date'] + ": " + x['Start Time'] + " - " + x['End Time']
+			 		
     		hours = LabHours.objects.all().filter(starttime__gt=datetime.strptime(x['Date'], "%m/%d/%Y"), starttime__lt=datetime.strptime(x['Date'], "%m/%d/%Y")+timedelta(days=1))
     		
     		if not hours:
-    			LabHours.objects.create(name="", starttime=starttime, endtime=endtime)
+    			LabHours.objects.create(name=name, starttime=starttime, endtime=endtime)
     		elif len(hours) == 1:
     			if (hours[0].starttime != starttime or hours[0].endtime != endtime):
     				hours[0].starttime = starttime
     				hours[0].endtime = endtime
+    				hours[0].name = name
     				hours[0].save()
     				
     		else:
     			hours.delete()
-    			LabHours.objects.create(name="", starttime=starttime, endtime=endtime)
+    			LabHours.objects.create(name=name, starttime=starttime, endtime=endtime)
     			
     		#does not update total time for lab hours
