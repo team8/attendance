@@ -8,15 +8,13 @@ from operator import itemgetter
 from forms import SubteamForm
 from attendanceapp.tables import StudentTable, StatTable, SubteamTable
 from django_tables2 import RequestConfig
-from datetime import datetime, timedelta
-from pytz import timezone
+from datetime import datetime, timedelta, date
 from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days, do_student_calcs
 
 import math
 import urllib2
 import re
 import logging
-import pytz
 
 # Create your views here.
 
@@ -36,7 +34,7 @@ def logIn(student):
     student.atLab=True
 
     #Set the login time
-    student.lastLoggedIn=datetime.now(tz=pytz.utc).astimezone(timezone('America/Los_Angeles'))
+    student.lastLoggedIn=datetime.now()
 
     #Write to the database
     student.save()
@@ -50,35 +48,39 @@ def logOut(student, save, autolog, outsidelabhours):
     lastLoggedIn=student.lastLoggedIn
 
     #Get the time now so we get the most accurate  time in relation to when they logged in
-    timeNow=datetime.now(tz=pytz.utc).astimezone(timezone('America/Los_Angeles'))
-
-    #Get the time they were in the lab and convert it from seconds to minutes
-    minutesWorked=float((timeNow-lastLoggedIn).total_seconds())
-    minutesWorked=minutesWorked/60
-    now = datetime.now()
+    timeNow=datetime.now()
+    
+    #Move to hoursWorked model
+    hours_elapsed = timeNow-lastLoggedIn
+    
+    hours = LabHours.objects.all().filter(starttime__gt=datetime.combine(date.today(), datetime.min.time()), starttime__lt=datetime.combine(date.today(), datetime.min.time())+timedelta(days=1))
+    time_deltas = []
+    
+    for i in hours:
+        if timeNow < i.starttime or lastLoggedIn > i.endtime:
+            continue
+        elif lastLoggedIn < i.starttime and timeNow > i.endtime:
+            time_deltas.append(i.endtime - i.starttime)
+        elif lastLoggedIn < i.starttime and timeNow < i.endtime:
+            time_deltas.append(timeNow - i.starttime)
+        elif lastLoggedIn > i.starttime and timeNow > i.endtime:
+            time_deltas.append(i.endtime - lastLoggedIn)
+        else:
+            time_deltas.append(timeNow-lastLoggedIn)
+            
+    valid_hours_elapsed = sum(time_deltas, timedelta())
+    percentTime = float(valid_hours_elapsed.total_seconds())/hours_elapsed.total_seconds()
+    weight = sum((h.endtime-h.starttime).total_seconds() for h in hours)
+    
+    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = timeNow.strftime("%A"),timeOut=timeNow, totalTime=hours_elapsed.total_seconds(), validTime=valid_hours_elapsed.total_seconds(), autoLogout=autolog, percentTime = percentTime, weight = weight, owner = student)
+    timeWorked.save()
+    #add the time worked object to the student so it can be viewed in the calander
+    student.hoursWorked.add(timeWorked)
+    #add the minutes to the student's total time
     student.save()
-    if(save):
-        hoursWorked = round(minutesWorked/60, 3)
-        #Create the "Time worked" object to be added to the student database
-        weights = 0
-        hourspct = 0
-        if not outsidelabhours:
-            try:
-                weights = LabHours.objects.filter(used = False).order_by("starttime").first().totalTime
-            except:
-                weights = 0
-            hourspct = (hoursWorked / weights) * 100
-            if hourspct > 100:
-                hourspct = 100
-        timeWorked=HoursWorked(timeIn=lastLoggedIn,day = now.strftime("%A"),timeOut=timeNow, totalTime=hoursWorked, autoLogout=autolog, outsideLabHours = outsidelabhours, weight = weights, percentTime = hourspct)
-        timeWorked.save()
-        #add the time worked object to the student so it can be viewed in the calander
-        student.hoursWorked.add(timeWorked)
-        #add the minutes to the student's total time
-        student.totalTime+= hoursWorked
-        student.save()
-        do_student_calcs(student)
-    return minutesWorked
+    do_student_calcs(student)
+        
+    return 0 #TODO: update with minutes worked
 
 
 def makeNewStudent(ID):

@@ -86,7 +86,8 @@ def get_total_days(student):
         return totaldays, datearr
     else:
         return 0, []
-    
+
+#fix
 def get_percent_days(student):
     days, datearr = get_total_days(student)
     labdays = 0
@@ -142,8 +143,19 @@ def subteam_total_and_fqt_days(team):
         return days, day
     except:
         return days, "None"
-        
+
+def total_hours(student):
+    total = 0
+    valid_total = 0
+    for i in student.hoursWorked.all():
+        total += i.totalTime
+        valid_total += i.validTime
+    student.totalTime = total
+    student.validTime = valid_total
+
 def do_student_calcs(student):
+
+    total_hours(student)
     average, stddev = weighted_average_and_stddev(student)
     overallavg, overallstddev = student_overall_stats(student)
     totaldays, hahalol = get_total_days(student)
@@ -156,6 +168,7 @@ def do_student_calcs(student):
     student.stddevTime = overallstddev
     student.averagePercentTimeWeighted = average
     student.stddevPercentTimeWeighted = stddev
+    
     student.save()
 
     for subteam in Subteam.objects.all():
