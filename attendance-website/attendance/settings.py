@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["server.palyrobotics.com"]
 LOGIN_REDIRECT_URL = "/"
+LOGIN_URL = "/login/"
 
 # Application definition
 
@@ -110,10 +111,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 LOGIN_REQUIRED_URLS = (
 	r'/viewPeopleInfo/(.*)$',
-	r'/ScanCard/(.*)$',
+	r'/scanCard/(.*)$',
     r'/viewPeopleStats/(.*)$',
     r'/viewSubteamStats/(.*)$',
-    r'^leaderboard/(.*)$',
+    r'/leaderboard/(.*)$',
 )
 LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 	

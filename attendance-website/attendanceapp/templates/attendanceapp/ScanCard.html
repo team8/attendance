@@ -16,7 +16,7 @@ href="{{ STATIC_URL }}attendanceapp/style.css" />
     <div id="header">
     </div>
 
-    <form action="{% url 'ScanCard' %}" method="post">
+    <form action="{% url 'scanCard' %}" method="post">
       {% csrf_token %}
       <input type="text" id="cardBox" name="studentID" autofocus pattern=".{8}"
       required title="8 Characters. ">

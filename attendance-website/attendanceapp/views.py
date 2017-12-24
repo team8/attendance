@@ -80,7 +80,7 @@ def logOut(student, save, autolog, outsidelabhours):
     student.save()
     do_student_calcs(student)
         
-    return 0 #TODO: update with minutes worked
+    return hours_elapsed.total_seconds()/60 #TODO: update with minutes worked
 
 
 def makeNewStudent(ID):
