@@ -29,4 +29,5 @@ urlpatterns = [
 	url(r'^leaderboard/$',views.leaderboard, name="leaderboard"),
     url(r'^viewPeopleStats/$', views.viewPeopleStats, name="viewPeopleStats"),
     url(r'^viewSubteamStats/$', views.viewSubteamStats, name="viewSubteamStats"),
+    url(r'^events$', views.slack_events)
 ]
