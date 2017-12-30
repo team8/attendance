@@ -92,7 +92,8 @@ def makeNewStudent(ID):
 	return True
     except:
         return False
-    
+
+@login_required()    
 def logInPage(request):
     #Check if we are passed the student ID -> check if it is first time loading the page
     #If this passes, that means a student is logging in/out

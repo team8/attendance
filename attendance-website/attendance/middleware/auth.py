@@ -2,6 +2,7 @@ import re
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 
 class RequireLoginMiddleware(object):
@@ -25,6 +26,11 @@ class RequireLoginMiddleware(object):
     LOGIN_REQUIRED_URLS_EXCEPTIONS is, conversely, where you explicitly
     define any exceptions (like login and logout URLs).
     """
+    
+    # IMPORTANT!
+    # Class modified to require staff credentials for all urls in LOGIN_REQUIED_URLS
+    # Use @login_required() for views that only require a login
+    
     def __init__(self):
         self.required = tuple(re.compile(url) for url in settings.LOGIN_REQUIRED_URLS)
         self.exceptions = tuple(re.compile(url) for url in settings.LOGIN_REQUIRED_URLS_EXCEPTIONS)
@@ -32,6 +38,10 @@ class RequireLoginMiddleware(object):
     def process_view(self, request, view_func, view_args, view_kwargs):
         # No need to process URLs if user already logged in
         if request.user.is_authenticated():
+            if not request.user.is_staff:
+                for url in self.required:
+                    if url.match(request.path):
+                        raise PermissionDenied
             return None
 
         # An exception match should immediately return None

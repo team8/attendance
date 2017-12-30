@@ -111,7 +111,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 LOGIN_REQUIRED_URLS = (
 	r'/viewPeopleInfo/(.*)$',
-	r'/scanCard/(.*)$',
     r'/viewPeopleStats/(.*)$',
     r'/viewSubteamStats/(.*)$',
     r'/leaderboard/(.*)$',
