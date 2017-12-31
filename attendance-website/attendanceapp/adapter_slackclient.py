@@ -23,14 +23,16 @@ slack_events_adapter = SlackEventAdapter(SLACK_VERIFICATION_TOKEN)
 def handle_message(event_data):
     message = event_data["event"]
     # If the incoming message contains "hi", then respond with a "Hello" message
-    
-    print message["bot_id"]
-    print message["bot_id"] is None
-    print message["bot_id"] == ""
-    
-    if message.get("subtype") is None:
+    print message.get('bot_id')
+    if message.get("subtype") is None and message.get('bot_id') == None:
         channel = message["channel"]
-        message = "Hello <@%s>! :tada:" % message["user"]
-        message += "\nI will tell you if you've forgotten to log out of the attendance system."
-        logging.info("chat.postMessage: channel: %s text: %s" % (channel, message))
-        CLIENT.api_call("chat.postMessage", channel=channel, text=message, as_user=True)
+        msg = message.get('text').lower()
+        if "thanks" in msg or "thank you" in msg:
+            text = "No problem!  Just doing my job :smile:"
+        elif "hi" in msg or "hello" in msg or "hey" in msg:
+            text = "Hello <@%s>! :tada:" % message["user"]
+        else:
+            text = "Greetings <@%s>! :tada:" % message["user"]
+            text += "\nI will tell you if you've forgotten to log out of the attendance system."
+        logging.info("chat.postMessage: channel: %s text: %s" % (channel, text))
+        CLIENT.api_call("chat.postMessage", channel=channel, text=text, as_user=True)
