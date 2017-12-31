@@ -30,6 +30,7 @@ class HoursWorked(models.Model): #This model should probably be renamed
 
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
+    slackID = models.CharField(max_length=9, default = "None")
     studentID = models.IntegerField() #The student's ID#. In the future this may end up being a robotics ID#, if we decide to make custom ID cards
     subteam = models.ForeignKey(Subteam) #What subteam the student is associated with. There are a few fringe cases (most notably the team captain), we should decide how we want to handle those.
     hoursWorked = models.ManyToManyField(HoursWorked, blank=True)

@@ -9,7 +9,7 @@ class Command(BaseCommand):
     help = 'adds students from csv file'
     def handle(self, *args, **options):
     
-    	file = open(os.path.join(settings.BASE_DIR, "data.csv"))
+    	file = open(os.path.join(settings.BASE_DIR, "data2.csv"))
     	data = list(csv.DictReader(file))
     	
     	subteams = []
@@ -24,4 +24,7 @@ class Command(BaseCommand):
     	for x in data:
     		students = Student.objects.all().filter(studentID=x['ID#']).first()
     		if not students:
-    			Student.objects.create(name=x['Full Name'], studentID=x['ID#'], subteam=Subteam.objects.get(name=x['Subteam']))
+    			Student.objects.create(name=x['Full Name'], studentID=x['ID#'], subteam=Subteam.objects.get(name=x['Subteam']), slackID=x['Slack ID'])
+    		else:
+    		students.slackID = x['Slack ID']
+    		students.save()
