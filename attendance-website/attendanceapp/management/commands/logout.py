@@ -23,21 +23,13 @@ class Command(BaseCommand):
 def logOut(student):
     #Tell the system that the student is no longer in the lab
     student.atLab=False
-
+    
     #load the last logged in time into memory
-    lastLoggedIn=student.lastLoggedIn
-    timeNow=lastLoggedIn
-
-    #Move to hoursWorked model
-    hours_elapsed = 0
-    valid_hours_elapsed = 0
-    percentTime = 0
-    weight = 0
-
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = timeNow.strftime("%A"),timeOut=timeNow, totalTime=hours_elapsed, validTime=valid_hours_elapsed, autoLogout=True, percentTime = percentTime, weight = weight, owner = student)
+    timeIn=student.lastLoggedIn
+    
+    timeWorked=HoursWorked(timeIn=timeIn,timeOut=timeIn,owner=student,autoLogout=True)
     timeWorked.save()
     #add the time worked object to the student so it can be viewed in the calander
     student.hoursWorked.add(timeWorked)
     #add the minutes to the student's total time
     student.save()
-    do_student_calcs(student)

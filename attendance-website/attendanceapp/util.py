@@ -202,7 +202,10 @@ def do_hours_worked_calcs(timeWorked):
             time_deltas.append(timeOut-timeIn)
             
     timeWorked.validTime = sum(time_deltas, timedelta()).total_seconds()
-    timeWorked.percentTime = float(timeWorked.validTime)/timeWorked.totalTime
+    try:
+    	timeWorked.percentTime = float(timeWorked.validTime)/timeWorked.totalTime
+    except:
+    	timeWorked.percentTime = 0
     timeWorked.weight = sum((h.endtime-h.starttime).total_seconds() for h in hours)
     
 from attendanceapp.models import Student, LabHours, Subteam
