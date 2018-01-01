@@ -12,10 +12,14 @@ class Subteam(models.Model):
     
     def __str__(self):
         return self.name
+        
+    def save(self, *args, **kwargs):
+    	do_subteam_calcs(self)
+    	models.Model.save(self, *args, **kwargs)
 
 class HoursWorked(models.Model): #This model should probably be renamed
     timeIn = models.DateTimeField() #Attribute that displays the time the student clocked in
-    timeOut = models.DateTimeField(blank=True, null=True) #Attribute that displays the time the student clocked out
+    timeOut = models.DateTimeField() #Attribute that displays the time the student clocked out
     day = models.CharField(max_length=25, default="None") #Day that the hours happened
     totalTime = models.FloatField(default=0) #Attribute that...wait...this could be restructured a little bit, or at the very least renamed
     validTime = models.FloatField(default=0)
@@ -27,7 +31,11 @@ class HoursWorked(models.Model): #This model should probably be renamed
     
     def __str__(self):
     	return self.owner.name + ": " + self.timeIn.isoformat(' ')
-
+    
+    def save(self, *args, **kwargs):
+		do_hours_worked_calcs(self)
+	 	models.Model.save(self, *args, **kwargs)
+	
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
     slackID = models.CharField(max_length=9, default = "None")
@@ -49,6 +57,10 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+		do_student_calcs(self)
+	 	models.Model.save(self, *args, **kwargs)
 
 class LabHours(models.Model):
     name = models.CharField(default="None", max_length = 50)
@@ -64,3 +76,5 @@ class OverallStats(models.Model):
     name = models.CharField(default = "Overall Stats", max_length = 25)
     totalLabHours = models.FloatField()
     totalLabDays = models.IntegerField()
+
+from attendanceapp.util import do_hours_worked_calcs, do_student_calcs, do_subteam_calcs

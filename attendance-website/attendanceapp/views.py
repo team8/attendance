@@ -49,42 +49,19 @@ def logOut(student, save, autolog, outsidelabhours):
     student.atLab=False
 
     #load the last logged in time into memory
-    lastLoggedIn=student.lastLoggedIn
+    timeIn=student.lastLoggedIn
 
     #Get the time now so we get the most accurate  time in relation to when they logged in
-    timeNow=datetime.now()
+    timeOut=datetime.now()
     
-    #Move to hoursWorked model
-    hours_elapsed = timeNow-lastLoggedIn
-    
-    hours = LabHours.objects.all().filter(starttime__gt=datetime.combine(date.today(), datetime.min.time()), starttime__lt=datetime.combine(date.today(), datetime.min.time())+timedelta(days=1))
-    time_deltas = []
-    
-    for i in hours:
-        if timeNow < i.starttime or lastLoggedIn > i.endtime:
-            continue
-        elif lastLoggedIn < i.starttime and timeNow > i.endtime:
-            time_deltas.append(i.endtime - i.starttime)
-        elif lastLoggedIn < i.starttime and timeNow < i.endtime:
-            time_deltas.append(timeNow - i.starttime)
-        elif lastLoggedIn > i.starttime and timeNow > i.endtime:
-            time_deltas.append(i.endtime - lastLoggedIn)
-        else:
-            time_deltas.append(timeNow-lastLoggedIn)
-            
-    valid_hours_elapsed = sum(time_deltas, timedelta())
-    percentTime = float(valid_hours_elapsed.total_seconds())/hours_elapsed.total_seconds()
-    weight = sum((h.endtime-h.starttime).total_seconds() for h in hours)
-    
-    timeWorked=HoursWorked(timeIn=lastLoggedIn,day = timeNow.strftime("%A"),timeOut=timeNow, totalTime=hours_elapsed.total_seconds(), validTime=valid_hours_elapsed.total_seconds(), autoLogout=autolog, percentTime = percentTime, weight = weight, owner = student)
+    timeWorked=HoursWorked(timeIn=timeIn,timeOut=timeOut,owner=student)
     timeWorked.save()
     #add the time worked object to the student so it can be viewed in the calander
     student.hoursWorked.add(timeWorked)
     #add the minutes to the student's total time
     student.save()
-    do_student_calcs(student)
-        
-    return hours_elapsed.total_seconds()/60 #TODO: update with minutes worked
+    
+    return timeWorked.totalTime/60 #TODO: update with minutes worked
 
 
 def makeNewStudent(ID):
@@ -93,7 +70,7 @@ def makeNewStudent(ID):
         html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
         name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
         Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
-    return True
+        return True
     except:
         return False
 

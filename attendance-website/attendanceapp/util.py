@@ -1,6 +1,5 @@
 from __future__ import division
-from attendanceapp.models import Student, LabHours, Subteam
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import operator
 import numpy as np
 import calendar
@@ -168,10 +167,42 @@ def do_student_calcs(student):
     student.stddevTime = overallstddev
     student.averagePercentTimeWeighted = average
     student.stddevPercentTimeWeighted = stddev
-    
-    student.save()
 
     for subteam in Subteam.objects.all():
-        subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
-        subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
         subteam.save()
+        
+def do_subteam_calcs(subteam):
+    subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
+    subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
+
+def do_hours_worked_calcs(timeWorked):
+
+    timeOut=timeWorked.timeOut
+    timeIn=timeWorked.timeIn
+    
+    timeWorked.day = timeOut.strftime("%A")
+    
+    #Move to hoursWorked model
+    hours_elapsed = timeOut-timeIn
+    timeWorked.totalTime = hours_elapsed.total_seconds()
+    
+    hours = LabHours.objects.all().filter(starttime__gt=datetime.combine(timeOut.date(), datetime.min.time()), starttime__lt=datetime.combine(timeOut.date(), datetime.min.time())+timedelta(days=1))
+    time_deltas = []
+    
+    for i in hours:
+        if timeOut < i.starttime or timeIn > i.endtime:
+            continue
+        elif timeIn < i.starttime and timeOut > i.endtime:
+            time_deltas.append(i.endtime - i.starttime)
+        elif timeIn < i.starttime and timeOut < i.endtime:
+            time_deltas.append(timeOut - i.starttime)
+        elif timeIn > i.starttime and timeOut > i.endtime:
+            time_deltas.append(i.endtime - timeIn)
+        else:
+            time_deltas.append(timeOut-timeIn)
+            
+    timeWorked.validTime = sum(time_deltas, timedelta()).total_seconds()
+    timeWorked.percentTime = float(timeWorked.validTime)/timeWorked.totalTime
+    timeWorked.weight = sum((h.endtime-h.starttime).total_seconds() for h in hours)
+    
+from attendanceapp.models import Student, LabHours, Subteam
