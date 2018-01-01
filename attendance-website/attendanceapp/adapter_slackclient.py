@@ -42,9 +42,16 @@ def handle_message(event_data):
                 for i in students:
                     text = text + i.name + ", "
                 text = text.rstrip(", ")
+        elif "hour" in msg:
+            student = Student.objects.filter(slackID = message["user"]).first()
+            if student != None:
+                text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours this season."
+            else:
+                text = "Sorry, you don't seem to be registered in the attendance system!"
         else:
             text = "Greetings <@%s>! :tada:" % message["user"]
             text += "\nI will tell you if you've forgotten to log out of the attendance system."
-            text += "\nYou can also ask me who is at the lab."
+            text += "\nYou can ask me who is at the lab."
+            text += "\nI can also tell you how many hours you have logged this season."
         logging.info("chat.postMessage: channel: %s text: %s" % (channel, text))
         CLIENT.api_call("chat.postMessage", channel=channel, text=text, as_user=True)
