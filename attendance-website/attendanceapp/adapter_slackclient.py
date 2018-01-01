@@ -35,7 +35,7 @@ def handle_message(event_data):
             text = "Hello <@%s>! :tada:" % message["user"]
         elif ("in" in msg or "at" in msg) and "lab" in msg:
             students = Student.objects.filter(atLab = True)
-            if students == None:
+            if not students:
                 text = "There is no one currently at the lab."
             else:
                 text = "The following people are currently at the lab:  "

@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, date
 from util import check_data, convertTime, weighted_average_and_stddev, student_overall_stats, get_total_days, get_percent_days, most_frequent_day, subteam_avg_and_stddev_pct, subteam_total_and_fqt_days, do_student_calcs
 from django.core.exceptions import PermissionDenied
 from .adapter_slackclient import slack_events_adapter, SLACK_VERIFICATION_TOKEN
+import threading
 
 import math
 import re
@@ -92,7 +93,7 @@ def makeNewStudent(ID):
         html = requests.post("https://palo-alto.edu/Forgot/Reset.cfm",data={"username":str(ID)}).text
         name = re.search(r'<input name="name" type="hidden" label="name" value="(.*?)"',html).group(1)
         Student(name=name,studentID=ID,subteam=Subteam.objects.get(name="Unknown")).save()
-	return True
+    return True
     except:
         return False
 
@@ -135,28 +136,28 @@ def logInPage(request):
             return render(request,'attendanceapp/ScanCard.html',{'message':"Hey " + student.name + ", you just logged in. Good to see you!"})
 
 def viewPeopleInfo(request, chartID = "chart_ID", chart_type = "column", chart_height = 500):
-	if request.method == "POST":
-		form = SubteamForm(request.POST)
-		if form.is_valid():
-			print("haha lol")
-	else:
-		form = SubteamForm()
-	names, hours = check_data()
-	chart = {"renderTo": chartID, "type": chart_type, "height": chart_height,}
-	title = {"text": "Student Hours"}
-	xAxis = {"categories": names, "labels": {"rotation": 90}}
-	yAxis = {"title": {"text": 'Hours'}}
-	series = [
-		{'name': 'Hours', 'data': hours}
-	]
-	return render(request, 'attendanceapp/viewPeopleHours.html', {'chartID': chartID, 'chart': chart,
+    if request.method == "POST":
+        form = SubteamForm(request.POST)
+        if form.is_valid():
+            print("haha lol")
+    else:
+        form = SubteamForm()
+    names, hours = check_data()
+    chart = {"renderTo": chartID, "type": chart_type, "height": chart_height,}
+    title = {"text": "Student Hours"}
+    xAxis = {"categories": names, "labels": {"rotation": 90}}
+    yAxis = {"title": {"text": 'Hours'}}
+    series = [
+        {'name': 'Hours', 'data': hours}
+    ]
+    return render(request, 'attendanceapp/viewPeopleHours.html', {'chartID': chartID, 'chart': chart,
                                                     'series': series, 'title': title, 
                                                     'xAxis': xAxis, 'yAxis': yAxis})
-	
+    
 def leaderboard(request):
-	table = StudentTable(Student.objects.order_by("-totalTime"))
-	RequestConfig(request).configure(table)
-	return render(request, "attendanceapp/leaderboard.html", {'students': table})
+    table = StudentTable(Student.objects.order_by("-totalTime"))
+    RequestConfig(request).configure(table)
+    return render(request, "attendanceapp/leaderboard.html", {'students': table})
     
 def viewPeopleStats(request):
     table = StatTable(Student.objects.filter(~Q(totalTime = 0)).order_by("-totalTime"))
@@ -226,7 +227,8 @@ def slack_events(request, *args, **kwargs):  # cf. https://api.slack.com/events/
 
         event_type = event_data["event"]["type"]
         logging.info("event_type: "+event_type)
-        slack_events_adapter.emit(event_type, event_data)
+        t = threading.Thread(target=slack_events_adapter.emit, args=(event_type, event_data))
+        t.start()
         return HttpResponse("")
 
     # default case

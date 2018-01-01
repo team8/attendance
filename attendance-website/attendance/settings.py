@@ -121,3 +121,20 @@ LOGIN_REQUIRED_URLS_EXCEPTIONS = (
 
 SLACK_BOT_TOKEN = os.environ.get('ATTENDANCE_BOT_TOKEN')
 SLACK_VERIFICATION_TOKEN = os.environ.get('ATTENDANCE_VERIFICATION_TOKEN')
+
+LOGGING = {
+    'version': 1,
+    'handlers': {
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        }
+    },
+}
