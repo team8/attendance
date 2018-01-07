@@ -1,7 +1,13 @@
 from django.db import models
+from django.contrib import admin
 import datetime
 
 # Create your models here.
+
+class UpdateAdmin(admin.ModelAdmin):
+	def save_model(self, request, obj, form, change):
+		admin.ModelAdmin.save_model(self, request, obj, form, change)
+		obj.save()
 
 class Subteam(models.Model):
     name = models.CharField(max_length=25)
@@ -35,6 +41,9 @@ class HoursWorked(models.Model): #This model should probably be renamed
     def save(self, *args, **kwargs):
 		do_hours_worked_calcs(self)
 	 	models.Model.save(self, *args, **kwargs)
+	
+class HoursWorkedAdmin(UpdateAdmin):
+	list_display = ('__str__', 'autoLogout')
 	
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
