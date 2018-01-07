@@ -43,7 +43,7 @@ class HoursWorked(models.Model): #This model should probably be renamed
 	 	models.Model.save(self, *args, **kwargs)
 	
 class HoursWorkedAdmin(UpdateAdmin):
-	list_display = ('__str__', 'autoLogout')
+	list_display = ('__str__', 'autoLogout', 'totalTime')
 	
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
