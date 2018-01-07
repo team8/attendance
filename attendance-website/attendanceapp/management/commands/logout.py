@@ -17,7 +17,7 @@ class Command(BaseCommand):
             if person.atLab:
                 logOut(person)
                 dm_id = CLIENT.api_call("im.open", user=person.slackID, return_im=True)['channel']['id']
-                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log out before leaving the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> to have your attendance corrected in the system."
+                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log out before leaving the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> with the time you left the lab in order to have the entry in the attendance system corrected."
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
                 
 def logOut(student):

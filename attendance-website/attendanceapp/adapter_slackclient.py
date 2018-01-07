@@ -45,7 +45,7 @@ def handle_message(event_data):
         elif "hour" in msg:
             student = Student.objects.filter(slackID = message["user"]).first()
             if student != None:
-                text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours this season."
+                text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours in total and "  + str(round(student.validTime/3600.0, 2)) + " hours during official lab hours this season."
             else:
                 text = "Sorry, you don't seem to be registered in the attendance system!"
         else:
