@@ -5,9 +5,9 @@ import datetime
 # Create your models here.
 
 class UpdateAdmin(admin.ModelAdmin):
-	def save_model(self, request, obj, form, change):
-		admin.ModelAdmin.save_model(self, request, obj, form, change)
-		obj.save()
+    def save_model(self, request, obj, form, change):
+        admin.ModelAdmin.save_model(self, request, obj, form, change)
+        obj.save()
 
 class Subteam(models.Model):
     name = models.CharField(max_length=25)
@@ -20,9 +20,9 @@ class Subteam(models.Model):
         return self.name
         
     def save(self, *args, **kwargs):
-    	models.Model.save(self, *args, **kwargs)
-    	do_subteam_calcs(self)
-    	models.Model.save(self, *args, **kwargs)
+        models.Model.save(self, *args, **kwargs)
+        do_subteam_calcs(self)
+        models.Model.save(self, *args, **kwargs)
 
 class HoursWorked(models.Model): #This model should probably be renamed
     timeIn = models.DateTimeField() #Attribute that displays the time the student clocked in
@@ -37,16 +37,16 @@ class HoursWorked(models.Model): #This model should probably be renamed
     owner = models.ForeignKey("Student")
     
     def __str__(self):
-    	return self.owner.name + ": " + self.timeIn.isoformat(' ')
+        return self.owner.name + ": " + self.timeIn.isoformat(' ')
     
     def save(self, *args, **kwargs):
-    	models.Model.save(self, *args, **kwargs)
-		do_hours_worked_calcs(self)
-	 	models.Model.save(self, *args, **kwargs)
-	
+        models.Model.save(self, *args, **kwargs)
+        do_hours_worked_calcs(self)
+        models.Model.save(self, *args, **kwargs)
+    
 class HoursWorkedAdmin(UpdateAdmin):
-	list_display = ('__str__', 'autoLogout', 'totalTime')
-	
+    list_display = ('__str__', 'autoLogout', 'totalTime')
+    
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
     slackID = models.CharField(max_length=9, default = "None")
@@ -57,7 +57,7 @@ class Student(models.Model):
     atLab = models.BooleanField(default=False) #Boolean attribute that tells us if the student is at the lab.
     totalTime = models.FloatField(default=0)  #Attribute that...again, we need clarity on this one
     validTime = models.FloatField(default=0)
-	
+    
     averageTime = models.FloatField(default = 0) #average overall
     stddevTime = models.FloatField(default = 0) #stddev overall
     daysWorked = models.IntegerField(default = 0)
@@ -70,9 +70,9 @@ class Student(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-    	models.Model.save(self, *args, **kwargs)
-		do_student_calcs(self)
-	 	models.Model.save(self, *args, **kwargs)
+        models.Model.save(self, *args, **kwargs)
+        do_student_calcs(self)
+        models.Model.save(self, *args, **kwargs)
 
 class LabHours(models.Model):
     name = models.CharField(default="None", max_length = 50)
