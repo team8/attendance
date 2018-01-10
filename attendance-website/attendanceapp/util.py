@@ -167,10 +167,7 @@ def do_student_calcs(student):
     student.stddevTime = overallstddev
     student.averagePercentTimeWeighted = average
     student.stddevPercentTimeWeighted = stddev
-
-    for subteam in Subteam.objects.all():
-        subteam.save()
-        
+            
 def do_subteam_calcs(subteam):
     subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
     subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)

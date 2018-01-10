@@ -20,6 +20,7 @@ class Subteam(models.Model):
         return self.name
         
     def save(self, *args, **kwargs):
+    	models.Model.save(self, *args, **kwargs)
     	do_subteam_calcs(self)
     	models.Model.save(self, *args, **kwargs)
 
@@ -39,6 +40,7 @@ class HoursWorked(models.Model): #This model should probably be renamed
     	return self.owner.name + ": " + self.timeIn.isoformat(' ')
     
     def save(self, *args, **kwargs):
+    	models.Model.save(self, *args, **kwargs)
 		do_hours_worked_calcs(self)
 	 	models.Model.save(self, *args, **kwargs)
 	
@@ -68,6 +70,7 @@ class Student(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
+    	models.Model.save(self, *args, **kwargs)
 		do_student_calcs(self)
 	 	models.Model.save(self, *args, **kwargs)
 
