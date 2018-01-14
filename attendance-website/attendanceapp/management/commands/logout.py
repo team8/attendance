@@ -14,11 +14,41 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         for person in Student.objects.all():
+            sentMessage = False
             if person.atLab:
                 logOut(person)
                 dm_id = CLIENT.api_call("im.open", user=person.slackID, return_im=True)['channel']['id']
-                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log out before leaving the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> with the time you left the lab in order to have the entry in the attendance system corrected."
+                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log in or log out at the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> with the time you arrived at and left the lab in order to have the entry in the attendance system corrected."
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
+                #print message
+                sentMessage=True
+            
+            autoLogoutHours = person.hoursWorked.filter(autoLogout=True) & person.hoursWorked.filter(totalTime__lt = 60.0)
+            
+            if autoLogoutHours:
+                dm_id = CLIENT.api_call("im.open", user=person.slackID, return_im=True)['channel']['id']
+                dates = set()
+                for h in autoLogoutHours:
+                    dates.add(h.timeIn.date())
+                dates = sorted(dates)
+                if sentMessage:
+                    message = "Furthermore, a reminder that your lab attendance entries for the following dates also need to be corrected:\n"
+                    for d in dates:
+                        if d != date.today()-timedelta(days=1):
+                            message += d.strftime("%m/%d/%y") + "\n"
+                    message = message.strip()
+                    if message[-1] == ":":
+                        continue
+                else:
+                    message = "Hi " + person.name.split(" ")[0] + "--a reminder that your lab attendance entries for the following dates need to be corrected by contacting <@U039ZJW8K> and providing the time you arrived and left:\n"
+                    for d in dates:
+                        message += d.strftime("%m/%d/%y") + "\n"
+                    message = message.strip()
+                
+                CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
+                #print message
+                    
+                
                 
 def logOut(student):
     #Tell the system that the student is no longer in the lab
