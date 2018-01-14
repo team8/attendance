@@ -43,10 +43,24 @@ class HoursWorked(models.Model): #This model should probably be renamed
         models.Model.save(self, *args, **kwargs)
         do_hours_worked_calcs(self)
         models.Model.save(self, *args, **kwargs)
+        
+class AutoLogoutFilter(admin.SimpleListFilter):
+	title = 'Auto Logout'
+	parameter_name = 'auto_logout'
+	
+	def lookups(self, request, model_admin):
+		return [
+			('autoLogout', 'Auto Logout')
+		]
+	
+	def queryset(self, request, queryset):
+		if self.value() == 'autoLogout':
+			return queryset.filter(totalTime__lt=60.0)
     
 class HoursWorkedAdmin(UpdateAdmin):
     list_display = ('__str__', 'autoLogout', 'totalTime')
-    
+    list_filter = (AutoLogoutFilter, 'owner')
+
 class Student(models.Model):
     name = models.CharField(max_length=50) #The student's name
     slackID = models.CharField(max_length=9, default = "None")
