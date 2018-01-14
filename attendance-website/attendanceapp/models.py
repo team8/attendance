@@ -50,12 +50,15 @@ class AutoLogoutFilter(admin.SimpleListFilter):
 	
 	def lookups(self, request, model_admin):
 		return [
-			('autoLogout', 'Auto Logout')
+			('autoLogout', 'Auto Logout'),
+			('autoLogoutCorrected', "Auto Logout + Corrected")
 		]
 	
 	def queryset(self, request, queryset):
 		if self.value() == 'autoLogout':
 			return queryset.filter(totalTime__lt=60.0)
+		elif self.value() == 'autoLogoutCorrected':
+			return queryset.filter(totalTime__lt=60.0) | queryset.filter(autoLogout=True)
     
 class HoursWorkedAdmin(UpdateAdmin):
     list_display = ('__str__', 'autoLogout', 'totalTime')
