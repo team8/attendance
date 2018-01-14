@@ -56,6 +56,11 @@ def logOut(student, save, autolog, outsidelabhours):
     
     timeWorked=HoursWorked(timeIn=timeIn,timeOut=timeOut,owner=student)
     timeWorked.save()
+    
+    if timeWorked.totalTime < 60.0:
+    	timeWorked.autoLogout = True
+    	timeWorked.save()
+    
     #add the time worked object to the student so it can be viewed in the calander
     student.hoursWorked.add(timeWorked)
     #add the minutes to the student's total time
