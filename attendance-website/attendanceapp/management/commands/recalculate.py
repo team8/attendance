@@ -7,6 +7,8 @@ class Command(BaseCommand):
     help = 'recalculates student stats'
 	
     def handle(self, *args, **options):
+        for hours in HoursWorked.objects.all():
+            hours.owner.hoursWorked.add(hours)
         for person in Student.objects.all():
             person.save()
         for subteam in Subteam.objects.all():
