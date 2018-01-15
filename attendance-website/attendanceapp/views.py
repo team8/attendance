@@ -23,14 +23,8 @@ import logging
 # Create your views here.
 
 def index(request):
-    #Load the index html page
-    template=loader.get_template('attendanceapp/index.html')
 
-    #Build the data to put into the HTML page -> Right now there is nothing
-    context=RequestContext(request)
-
-    #Render the html and return it to the user -> This is only used in the index view
-    return HttpResponse(template.render(context))
+    return HttpResponse(render(request, 'attendanceapp/index.html'))
 
 
 def logIn(student):

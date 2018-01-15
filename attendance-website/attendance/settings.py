@@ -25,7 +25,7 @@ SECRET_KEY = 'ii@k+ki-zf#&hp(6r^t1w%je3%hz)uz(!xwphe2b8#zoxoeed)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["server.palyrobotics.com"]
+ALLOWED_HOSTS = ["server.palyrobotics.com", "localhost"]
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login/"
 
@@ -69,7 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-				'django.core.context_processors.static',
+				'django.template.context_processors.static',
             ],
         },
     },
