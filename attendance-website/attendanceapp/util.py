@@ -187,13 +187,14 @@ def do_hours_worked_calcs(timeWorked):
     time_deltas = []
     
     for i in hours:
+    	
         if timeOut < i.starttime or timeIn > i.endtime:
             continue
         elif timeIn < i.starttime and timeOut > i.endtime:
             time_deltas.append(i.endtime - i.starttime)
-        elif timeIn < i.starttime and timeOut < i.endtime:
+        elif timeIn <= i.starttime and timeOut <= i.endtime:
             time_deltas.append(timeOut - i.starttime)
-        elif timeIn > i.starttime and timeOut > i.endtime:
+        elif timeIn >= i.starttime and timeOut >= i.endtime:
             time_deltas.append(i.endtime - timeIn)
         else:
             time_deltas.append(timeOut-timeIn)
