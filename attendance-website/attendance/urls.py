@@ -22,8 +22,8 @@ from django.conf import settings
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='Index'),
-	url(r'^login/$', auth_views.login, name="login"),
-	url(r'^logout/$', auth_views.logout, {'next_page': '/login/'}, name="logout"),
+	url(r'^login/$', auth_views.login, name="django.contrib.auth.views.login"),
+	url(r'^logout/$', auth_views.logout, {'next_page': '/login/'}, name="django.contrib.auth.views.logout"),
     url(r'^scanCard/$', views.logInPage, name='scanCard'),
     url(r'^viewPeopleInfo/$',views.viewPeopleInfo,name="viewPeopleInfo"),
 	url(r'^leaderboard/$',views.leaderboard, name="leaderboard"),
