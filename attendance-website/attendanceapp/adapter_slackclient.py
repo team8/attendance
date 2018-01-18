@@ -49,7 +49,7 @@ def handle_message(event_data):
             if student != None:
                 if "log" in msg:
                     text = "Here is a detailed output of your logged hours:\n"
-                    hours = student.hoursWorked
+                    hours = student.hoursWorked.all()
                     output = sorted([(h.timeIn, h.timeOut) for h in hours], key=lambda x: x[0], reverse=True)
                     for i in output:
                         text+=i[0].strftime("%m/%d/%y") + ": " + i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") + "\n"
