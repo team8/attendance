@@ -11,6 +11,8 @@ from pyee import EventEmitter
 from slackclient import SlackClient
 CLIENT = SlackClient(SLACK_BOT_TOKEN)
 
+from datetime import datetime, timedelta, date, time
+
 
 class SlackEventAdapter(EventEmitter):
     def __init__(self, verification_token):
@@ -45,7 +47,17 @@ def handle_message(event_data):
         elif "hour" in msg:
             student = Student.objects.filter(slackID = message["user"]).first()
             if student != None:
-                text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours in total and "  + str(round(student.validTime/3600.0, 2)) + " hours during official lab hours this season."
+                if "log" in msg:
+                    text = "Here is a detailed output of your logged hours:\n"
+                    hours = student.hoursWorked
+                    output = sorted([(h.timeIn, h.timeOut) for h in hours], key=lambda x: x[0], reverse=True)
+                    for i in output:
+                        text+=i[0].strftime("%m/%d/%y") + ": " + i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") + "\n"
+                    text = text.strip()
+                    if text[-1] == ":":
+                        text = "You have not logged any hours in the attendance system yet."
+                else:
+                    text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours in total and "  + str(round(student.validTime/3600.0, 2)) + " hours during official lab hours this season."
             else:
                 text = "Sorry, you don't seem to be registered in the attendance system!"
         else:
