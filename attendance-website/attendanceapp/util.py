@@ -15,7 +15,7 @@ def check_data():
     for student in students:
         if student.totalTime != 0:
             names.append(str(student.name))
-            hours.append(student.totalTime)
+            hours.append(student.totalTime/3600.0)
             data = zip(names, hours)
     sorteddata = zip(*sorted(data, key=operator.itemgetter(1), reverse=True))
     names = list(sorteddata[0])
