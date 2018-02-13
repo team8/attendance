@@ -183,7 +183,7 @@ def do_hours_worked_calcs(timeWorked):
     hours_elapsed = timeOut-timeIn
     timeWorked.totalTime = hours_elapsed.total_seconds()
     
-    hours = LabHours.objects.all().filter(starttime__gt=datetime.combine(timeOut.date(), datetime.min.time()), starttime__lt=datetime.combine(timeOut.date(), datetime.min.time())+timedelta(days=1))
+    hours = LabHours.objects.all().filter(starttime__gt=datetime.combine(timeIn.date(), datetime.min.time()), starttime__lt=datetime.combine(timeIn.date(), datetime.min.time())+timedelta(days=1))
     time_deltas = []
     
     for i in hours:
