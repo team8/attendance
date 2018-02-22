@@ -56,6 +56,13 @@ def handle_message(event_data):
                     text = text.strip()
                     if text[-1] == ":":
                         text = "You have not logged any hours in the attendance system yet."
+                elif "build" in msg:
+                    total = 0
+                    valid_total = 0
+                    for i in student.hoursWorked.filter(timeIn__gte=datetime(2018, 1, 6), timeIn__lt=datetime(2018, 2, 21)):
+                        total += i.totalTime
+                        valid_total += i.validTime
+                    text = "You logged " + str(round(total/3600.0, 2)) + " hours in total during build season and "  + str(round(valid_total/3600.0, 2)) + " hours during official lab hours."
                 else:
                     text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours in total and "  + str(round(student.validTime/3600.0, 2)) + " hours during official lab hours this season."
             else:
