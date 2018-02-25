@@ -13,7 +13,7 @@ class Command(BaseCommand):
     
     	response = urllib2.urlopen("https://docs.google.com/spreadsheets/d/e/2PACX-1vQS83DMkhEnoiz8EmjVyP40DV-HbUkZkKiGZbjKZKvlIC6cdBlYOJJcb6NfS2LuXHnZz_OT0EsxhevW/pub?gid=1449894080&single=true&output=csv")
     	data = csv.DictReader(response)
-    	data = [x for x in data if datetime.strptime(x['Date'], "%m/%d/%Y") >= datetime.combine(date.today(), datetime.min.time())]
+    	data = [x for x in data if datetime.strptime(x['Date'], "%m/%d/%Y") >= datetime.combine(date.today(), datetime.min.time())-timedelta(4)]
     	
     	
     	for i in data:
