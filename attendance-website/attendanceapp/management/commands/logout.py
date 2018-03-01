@@ -22,7 +22,7 @@ class Command(BaseCommand):
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
                 #print message
                 sentMessage=True
-            
+            """
             autoLogoutHours = person.hoursWorked.filter(autoLogout=True) & person.hoursWorked.filter(totalTime__lt = 60.0)
             
             if autoLogoutHours:
@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
                 #print message
-                    
+            """ 
                 
                 
 def logOut(student):
