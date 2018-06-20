@@ -22,19 +22,9 @@ def check_data():
     hours = list(sorteddata[1])
     return names, hours
     
-def weighted_average_and_stddev(student):
-    valuearr = np.array([])
-    weightarr = np.array([])
-    for hours in student.hoursWorked.all():
-        valuearr = np.append(valuearr, hours.percentTime)
-        weightarr = np.append(weightarr, hours.weight)
-    try:
-        average = np.average(valuearr, weights = weightarr)
-        variance = np.average((valuearr - average)**2, weights = weightarr)
-    except:
-        average = 0
-        variance = 0
-    return(average, math.sqrt(variance))
+
+
+
     
 def convertTime(time):
     timestamp = calendar.timegm(time.timetuple())
@@ -59,17 +49,7 @@ def utc_to_normal(utctime):
     realhours = local_dt.replace(microsecond=utctime.microsecond)
     return realhours
     
-def student_overall_stats(student):
-    hourarr = np.array([])
-    for hours in student.hoursWorked.all():
-        hourarr = np.append(hourarr, hours.totalTime)
-    if hourarr.size != 0:  
-        average = np.average(hourarr)
-        stddev = np.std(hourarr)
-    else:
-        average = 0
-        stddev = 0
-    return average, stddev
+
 
 def get_total_days(student):
     if student.hoursWorked.first() is not None:
@@ -117,13 +97,7 @@ def most_frequent_day(student):
     except:
         return "None"
         
-def subteam_avg_and_stddev_pct(team):
-    valuearr = np.array([])
-    for student in Student.objects.filter(subteam=team): 
-        valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
-    average = np.average(valuearr)
-    variance = np.average((valuearr - average)**2)
-    return (average, math.sqrt(variance))
+
     
 def subteam_total_and_fqt_days(team):
     days = 1
@@ -169,8 +143,65 @@ def do_student_calcs(student):
     student.stddevPercentTimeWeighted = stddev
             
 def do_subteam_calcs(subteam):
-    subteam.averagePercentTimeWeighted, subteam.stddevPercentTimeWeighted = subteam_avg_and_stddev_pct(subteam)
-    subteam.totalDaysWorked, subteam.mostFrequentDay = subteam_total_and_fqt_days(subteam)
+    averageSub, stddevSub = subteam_avg_and_stddev_pct(subteam)
+
+    subteam.averagePercentTimeWeighted = averageSub
+    subteam.stddevPercentTimeWeighted = stddevSub
+
+    totDays, mostFreqDay = subteam_total_and_fqt_days(subteam)
+    subteam.totalDaysWorked = totDays
+    subteam.mostFrequentDay = mostFreqDay
+
+def subteam_avg_and_stddev_pct(team):
+    #valuearr = np.array([])
+    valuearr = np.array([])
+    if valuearr.size != 0: 
+        for student in Student.objects.filter(subteam=team): 
+            valuearr = np.append(valuearr, student.averagePercentTimeWeighted)
+    
+
+    if valuearr.size != 0:
+        average = np.average(valuearr)
+        variance = np.average((valuearr - average)**2)
+    else:
+        average = 0
+        variance = 0
+
+    return (average, math.sqrt(variance))
+
+def student_overall_stats(student):
+    hourarr = np.array([])
+    for hours in student.hoursWorked.all():
+        hourarr = np.append(hourarr, hours.totalTime)
+    if hourarr.size != 0:  
+        average = np.average(hourarr)
+        stddev = np.std(hourarr)
+    else:
+        average = 0
+        stddev = 0
+    return average, stddev
+
+
+def weighted_average_and_stddev(student):
+    valuearr = np.array([])
+    weightarr = np.array([])
+    for hours in student.hoursWorked.all():
+        if valuearr.size != 0 or weightarr.size != 0:
+            valuearr = np.append(valuearr, hours.percentTime)
+            weightarr = np.append(weightarr, hours.weight)
+
+    #if valuearr.size != 0 or weightarr.size != 0:
+        #average = np.average(valuearr, weights = weightarr)
+        #variance = np.average((valuearr - average)**2, weights = weightarr)
+
+    if valuearr.size != 0 or weightarr.size != 0:
+        average = np.average(valuearr)
+        variance = np.average((valuearr - average)**2)
+    
+    else:
+        average = 0
+        variance = 0
+    return (average, math.sqrt(variance))
 
 def do_hours_worked_calcs(timeWorked):
 

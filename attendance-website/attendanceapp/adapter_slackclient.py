@@ -35,6 +35,9 @@ def handle_message(event_data):
             text = "No problem!  Just doing my job :smile:"
         elif "hi" in msg or "hello" in msg or "hey" in msg:
             text = "Hello <@%s>! :tada:" % message["user"]
+        elif "hi" in msg:
+            if "eraine" in msg:
+                text = "Hello <@%s>! :tada:" % message["user"]
         elif ("in" in msg or "at" in msg) and "lab" in msg:
             students = Student.objects.filter(atLab = True)
             if not students:
