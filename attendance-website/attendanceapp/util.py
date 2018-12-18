@@ -6,6 +6,8 @@ import calendar
 import math
 import pytz
 
+from django.core.management import call_command
+
 def check_data():
     data = {}
     sorteddata = {}
@@ -21,9 +23,6 @@ def check_data():
     names = list(sorteddata[0])
     hours = list(sorteddata[1])
     return names, hours
-    
-
-
 
     
 def convertTime(time):
@@ -237,4 +236,38 @@ def do_hours_worked_calcs(timeWorked):
     	timeWorked.percentTime = 0
     timeWorked.weight = sum((h.endtime-h.starttime).total_seconds() for h in hours)
     
-from attendanceapp.models import Student, LabHours, Subteam
+def approve_all_changes():
+    for x in HoursWorkedEditSet.objects.all():
+        for y in x.contents.all():
+            y.timeIn = y.newTimeIn or y.timeIn
+            y.timeOut = y.newTimeOut or y.timeOut
+            if abs((y.timeIn-y.timeOut).total_seconds()) <= 2:
+                y.delete()
+                continue
+            y.newTimeIn = None
+            y.newTimeOut = None
+            y.save()  
+        x.delete()
+
+def deny_change(id, CLIENT):
+    x = HoursWorkedEditSet.objects.get(pk=id)
+    
+    notify_deny(x.owner, x.date, CLIENT)
+    
+    for y in x.contents.all():
+        if abs((y.timeIn-y.timeOut).total_seconds()) < 60:
+            y.autoLogout = True
+        y.newTimeIn = None
+        y.newTimeOut = None
+        y.save()
+    
+    x.delete()
+
+def notify_deny(student, date, CLIENT):
+
+    message = "Hello <@%s>--your submitted attendance changes for " % student.slackID + date.strftime("%m/%d/%y") + " were denied. Please resubmit changes if you would like you hours corrected."
+    
+    dm_id = CLIENT.api_call("im.open", user=student.slackID, return_im=True)['channel']['id']
+    CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
+    
+from attendanceapp.models import Student, LabHours, Subteam, HoursWorked, HoursWorkedEditSet

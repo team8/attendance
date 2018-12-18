@@ -13,6 +13,9 @@ CLIENT = SlackClient(SLACK_BOT_TOKEN)
 
 from datetime import datetime, timedelta, date, time
 
+from django.core.management import call_command
+from util import approve_all_changes, deny_change
+
 
 class SlackEventAdapter(EventEmitter):
     def __init__(self, verification_token):
@@ -37,18 +40,39 @@ def handle_message(event_data):
         if not text:
             text = handleNormalCommands(msg, message["user"])
         
-        logging.info("chat.postMessage: channel: %s text: %s" % (channel, text))
-        CLIENT.api_call("chat.postMessage", channel=channel, text=text, as_user=True)
+        if text and text != "no msg":
+            logging.info("chat.postMessage: channel: %s text: %s" % (channel, text))
+            CLIENT.api_call("chat.postMessage", channel=channel, text=text, as_user=True)
 
 def handleAdminCommands(message, user):
     text = ""
-    if "approve" in message:
+    if "changes" in message:
+         call_command('approve')
+         text = "no msg"
+    elif "approve" in message:
+        approve_all_changes()
         text = "Great!  All changes have been approved."
     elif "deny" in message:
         splitMsg = message.split(" ", 2)
-        id = int(splitMsg[1])
-        msgToMember = splitMsg[2].strip()
-        text = "Change *" + str(id) +"* has been denied. A notifcation has been sent to the student."
+        if len(splitMsg) > 2:
+            id = int(splitMsg[1])
+            msgToMember = splitMsg[2].strip()
+            try:
+                deny_change(id, CLIENT)
+            except:
+                text = "Invalid id for `deny` command."
+            else:
+                text = "Change *" + str(id) +"* has been denied. A notifcation has been sent to the student with your message."
+        elif len(splitMsg) == 2:
+            id = int(splitMsg[1])
+            try:
+                deny_change(id, CLIENT)
+            except:
+                text = "Invalid id for `deny` command."
+            else:
+                text = "Change *" + str(id) +"* has been denied. A notifcation has been sent to the student."
+        else:
+            text = "Please provide arguments to the `deny` command."
     return text
 
 def handleNormalCommands(message, user):
@@ -57,9 +81,6 @@ def handleNormalCommands(message, user):
         text = "No problem!  Just doing my job :smile:"
     elif "hi" in message or "hello" in message or "hey" in message:
         text = "Hello <@%s>! :tada:" % user
-    elif "hi" in message:
-        if "eraine" in message:
-            text = "Hello <@%s>! :tada:" % user
     elif ("in" in message or "at" in message) and "lab" in message:
         students = Student.objects.filter(atLab = True)
         if not students:

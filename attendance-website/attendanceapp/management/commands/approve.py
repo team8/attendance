@@ -15,25 +15,40 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
     
-        message = "Hello!  Daily Approval Update:\n\n"
+        message = "Hello! Daily Approval Update:\n\n"
     
         for s in HoursWorkedEditSet.objects.all():
             message += self.setToString(s) + "\n"
         
         message += "\nType `approve` to approve all of these changes, or `deny <id> <reason>` to deny specifc changes."
-            
-        print message
+        
+        dm_id = CLIENT.api_call("im.open", user="U039ZJW8K", return_im=True)['channel']['id']
+        CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
     
     @staticmethod
     def setToString(a):
         s = []
+        t = []
         for x in a.contents.all():
             timeIn = x.newTimeIn or x.timeIn
             timeOut = x.newTimeOut or x.timeOut
-            #if (timeIn-timeOut).total_seconds() > 1:
-            s.append((timeIn, timeOut))
+            if abs((timeIn-timeOut).total_seconds()) > 2:
+                s.append((timeIn, timeOut))
+            if abs((x.timeIn-x.timeOut).total_seconds()) > 2:
+                t.append((x.timeIn, x.timeOut))
         s = sorted(s, key=lambda y: y[0])
+        t = sorted(t, key=lambda y: y[0])
         
-        return "*(" +  str(a.pk) + ")* " + a.owner.name + "\n>(" + a.date.strftime("%m/%d/%y") + ")\n>" + "\n>".join(i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") for i in s)
+        message =  "*(" +  str(a.pk) + ")* " + a.owner.name + "\n>(" + a.date.strftime("%m/%d/%y") + ")"
+        if t:
+            message += "\n>*Original*\n>" + "\n>".join(i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") for i in t)
+        else:
+            message += "\n>*Original*\n>No hours"
+        if s:
+            message += "\n>*Modified*\n>" + "\n>".join(i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") for i in s)
+        else:
+            message += "\n>*Original*\n>No hours"
+        return message
+        
         
         
