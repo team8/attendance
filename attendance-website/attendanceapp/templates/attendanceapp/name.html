@@ -1,0 +1,95 @@
+<title>Get Name</title>
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
+<!--
+<form class="form-horizontal" method="POST" action="">
+{% csrf_token %}
+{{formset}}
+<button type="submit">Create</button>
+</form>
+-->
+
+<form class="form-horizontal" method="POST" action="">
+{% csrf_token %}
+{{ formset.management_form }}
+{% for form in formset %}
+<div class="row form-row spacer">
+    {{form.id}}
+    <div class="col-2">
+        <label>{{form.newTimeIn.label}}</label>
+    </div>
+    <div class="col-3">
+        <div class="input-group">
+            {{form.newTimeIn}}
+        </div>  
+            
+    </div>
+    <div class="col-2">
+        <label>{{form.newTimeOut.label}}</label>
+    </div>
+    <div class="col-3">
+        <div class="input-group">
+            {{form.newTimeOut}}
+        </div>
+            
+    </div>
+    <div class="col-2">
+        <div class="input-group-append" style="display:inline;">
+            <button class="btn btn-success add-form-row">+</button>
+            <button class="btn btn-danger remove-form-row">-</button>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<div class="row spacer">
+    <div class="col-4 offset-2">
+        <button type="submit" class="btn btn-block btn-primary">Create</button>
+    </div>
+</div>
+</form>
+
+<script type='text/javascript'>
+
+function cloneMore(selector, prefix) {
+    var newElement = $(selector).clone(true);
+    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+    newElement.find(":input:not(:button)").each(function() {
+        var name = $(this).attr('name');
+        name = name.replace('-' + (total-1) + '-', '-' + total + '-');
+        var id = 'id_' + name;
+        $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+    });
+    total++;
+    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    newElement.hide();
+    $(selector).after(newElement);
+    newElement.slideDown('fast');
+    return false;
+}
+function deleteForm(prefix, btn) {
+    var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+    if (total > 1){
+        var row = btn.closest('.form-row');
+        row.slideUp('fast').delay(200).queue(function(next) { $(this).find(":input[type!='hidden']").removeAttr('value'); next(); });
+    }
+    return false;
+}
+$(document).on('click', '.add-form-row', function(e){
+    e.preventDefault();
+    cloneMore('.form-row:last', 'form');
+    return false;
+});
+$(document).on('click', '.remove-form-row', function(e){
+    e.preventDefault();
+    deleteForm('form', $(this));
+    return false;
+});
+
+</script>
