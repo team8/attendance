@@ -47,7 +47,7 @@ class Command(BaseCommand):
         if s:
             message += "\n>*Modified*\n>" + "\n>".join(i[0].strftime("%I:%M %p") + " - " + i[1].strftime("%I:%M %p") for i in s)
         else:
-            message += "\n>*Original*\n>No hours"
+            message += "\n>*Modified*\n>No hours"
         return message
         
         
