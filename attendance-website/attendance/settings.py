@@ -25,7 +25,7 @@ SECRET_KEY = 'ii@k+ki-zf#&hp(6r^t1w%je3%hz)uz(!xwphe2b8#zoxoeed)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["server.palyrobotics.com", "localhost"]
+ALLOWED_HOSTS = ["server.palyrobotics.com", "localhost", "34.94.112.170"]
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/accounts/login/"
 
