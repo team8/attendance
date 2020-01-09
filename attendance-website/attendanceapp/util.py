@@ -265,7 +265,7 @@ def deny_change(id, CLIENT):
 
 def notify_deny(student, date, CLIENT):
 
-    message = "Hello <@%s>--your submitted attendance changes for " % student.slackID + date.strftime("%m/%d/%y") + " were denied. Please resubmit changes if you would like you hours corrected."
+    message = "Hello <@%s>--your submitted attendance changes for " % student.slackID + date.strftime("%m/%d/%y") + " were denied. Please resubmit changes if you would like your hours corrected. Feel free to contact @<U2S7Z0UCD> with any questions."
     
     dm_id = CLIENT.api_call("im.open", user=student.slackID, return_im=True)['channel']['id']
     CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)

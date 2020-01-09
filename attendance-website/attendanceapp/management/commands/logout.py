@@ -13,6 +13,7 @@ class Command(BaseCommand):
     help = 'automatically logs out students'
     
     def handle(self, *args, **options):
+        print "Auto logout starting..."
         for person in Student.objects.all():
             sentMessage = False
             if person.atLab:
@@ -20,7 +21,6 @@ class Command(BaseCommand):
                 dm_id = CLIENT.api_call("im.open", user=person.slackID, return_im=True)['channel']['id']
                 message = "Hi " + person.name.split(" ")[0] + "--you forgot to log in or log out at the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> with the time you arrived at and left the lab in order to have the entry in the attendance system corrected."
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
-                #print message
                 sentMessage=True
             """
             autoLogoutHours = person.hoursWorked.filter(autoLogout=True) & person.hoursWorked.filter(totalTime__lt = 60.0)
@@ -48,6 +48,7 @@ class Command(BaseCommand):
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
                 #print message
             """ 
+        print "Auto logout completed"
                 
                 
 def logOut(student):

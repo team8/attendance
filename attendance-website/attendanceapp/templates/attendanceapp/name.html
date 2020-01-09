@@ -1,4 +1,4 @@
-<title>Get Name</title>
+<title>Hours Correction Form</title>
 
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -16,14 +16,23 @@
 </form>
 -->
 
-<form class="form-horizontal" method="POST" action="">
+<form class="form-horizontal" method="POST" action="" style="padding: 20px;">
 {% csrf_token %}
+<div class="row">
+    <div class="col">
+        <h2 style="padding-bottom: 10px">Hours Correction Form</h2>
+        <p  style="padding-bottom: 10px">Use this form to submit corrections to your recorded lab hours.  You can edit existing entries, remove unnecessary entries and add additional entries. Please follow the <i>yyyy-mm-dd hh:mm:ss</i> format.
+        <br>
+        Your corrections will be submitted for approval.  Contact <b>@lchang</b> for any questions regarding your lab hours or <b>@dardeshna</b> for any technical questions regarding the attendance system.
+        </p>
+    </div>
+</div>
 {{ formset.management_form }}
 {% for form in formset %}
 <div class="row form-row spacer">
     {{form.id}}
     <div class="col-2">
-        <label>{{form.newTimeIn.label}}</label>
+        <label>Time In:</label>
     </div>
     <div class="col-3">
         <div class="input-group">
@@ -32,7 +41,7 @@
             
     </div>
     <div class="col-2">
-        <label>{{form.newTimeOut.label}}</label>
+        <label>Time Out:</label>
     </div>
     <div class="col-3">
         <div class="input-group">
@@ -48,9 +57,9 @@
     </div>
 </div>
 {% endfor %}
-<div class="row spacer">
-    <div class="col-4 offset-2">
-        <button type="submit" class="btn btn-block btn-primary">Create</button>
+<div class="row spacer" style="padding-top: 20px;">
+    <div class="col-4">
+        <button type="submit" class="btn btn-block btn-primary">Submit</button>
     </div>
 </div>
 </form>

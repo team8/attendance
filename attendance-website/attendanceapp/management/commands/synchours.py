@@ -10,6 +10,8 @@ import re
 class Command(BaseCommand):
     help = 'updates the lab hours from google sheet'
     def handle(self, *args, **options):
+        
+        print "Syncing hours with spreadsheet..."
     
     	response = urllib2.urlopen("https://docs.google.com/spreadsheets/d/e/2PACX-1vQS83DMkhEnoiz8EmjVyP40DV-HbUkZkKiGZbjKZKvlIC6cdBlYOJJcb6NfS2LuXHnZz_OT0EsxhevW/pub?gid=1449894080&single=true&output=csv")
     	data = csv.DictReader(response)
@@ -41,3 +43,5 @@ class Command(BaseCommand):
     			LabHours.objects.create(name=name, starttime=starttime, endtime=endtime)
     			
     		#does not update total time for lab hours
+    		
+    	print "Sync completed"

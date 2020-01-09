@@ -14,15 +14,18 @@ class Command(BaseCommand):
     help = 'automatically logs out students'
     
     def handle(self, *args, **options):
-    
-        message = "Hello! Daily Approval Update:\n\n"
-    
-        for s in HoursWorkedEditSet.objects.all():
-            message += self.setToString(s) + "\n"
         
-        message += "\nType `approve` to approve all of these changes, or `deny <id> <reason>` to deny specifc changes."
+        message = "Hello! Outstanding requested lab hour changes:\n\n"
+                
+        if not HoursWorkedEditSet.objects.all().exists():
+            message += "*No outstanding requests*\n"
+        else:
+            for s in HoursWorkedEditSet.objects.all():
+                message += self.setToString(s) + "\n"
         
-        dm_id = CLIENT.api_call("im.open", user="U039ZJW8K", return_im=True)['channel']['id']
+        message += "\nType `approve` to approve all outstanding changes, or `deny <id> [reason]` to deny specifc changes. Type `changes` to display a refreshed list of requested changes."
+        
+        dm_id = CLIENT.api_call("im.open", user=options["user"], return_im=True)['channel']['id']
         CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
     
     @staticmethod

@@ -24,7 +24,6 @@ class SlackEventAdapter(EventEmitter):
 
 slack_events_adapter = SlackEventAdapter(SLACK_VERIFICATION_TOKEN)
 
-
 # Example responder to greetings
 @slack_events_adapter.on("message")
 def handle_message(event_data):
@@ -35,7 +34,7 @@ def handle_message(event_data):
         channel = message["channel"]
         msg = message.get('text').lower()
         text = ""
-        if message["user"] == "U039ZJW8K":
+        if message["user"] == "U039ZJW8K" or message["user"] == "U2S7Z0UCD":
             text = handleAdminCommands(msg, message["user"])
         if not text:
             text = handleNormalCommands(msg, message["user"])
@@ -46,8 +45,10 @@ def handle_message(event_data):
 
 def handleAdminCommands(message, user):
     text = ""
+    if "sudo" in message:
+        text = "Tell <@U039ZJW8K> this needs to be fixed."
     if "changes" in message:
-         call_command('approve')
+         call_command('approve', user=user)
          text = "no msg"
     elif "approve" in message:
         approve_all_changes()
@@ -102,13 +103,6 @@ def handleNormalCommands(message, user):
                 text = text.strip()
                 if text[-1] == ":":
                     text = "You have not logged any hours in the attendance system yet."
-            elif "build" in message:
-                total = 0
-                valid_total = 0
-                for i in student.hoursWorked.filter(timeIn__gte=datetime(2018, 1, 6), timeIn__lt=datetime(2018, 2, 21)):
-                    total += i.totalTime
-                    valid_total += i.validTime
-                text = "You logged " + str(round(total/3600.0, 2)) + " hours in total during build season and "  + str(round(valid_total/3600.0, 2)) + " hours during official lab hours."
             else:
                 text = "You have currently logged " + str(round(student.totalTime/3600.0, 2)) + " hours in total and "  + str(round(student.validTime/3600.0, 2)) + " hours during official lab hours this season."
         else:

@@ -1,4 +1,4 @@
-<title>Get Name</title>
+<title>Attendance System Login</title>
 
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -9,14 +9,20 @@
 
 <link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
 
-<form class="form-horizontal" method="POST" action="">
+<form class="form-horizontal" method="POST" action="" style="padding: 20px;">
 {% csrf_token %}
 <div class="row">
-    {{form}}
+    <div class="col">
+        <h2 style="padding-bottom: 20px">Attendance System Login</h2>
+    </div>
 </div>
 <div class="row">
-    <div class="col-4 offset-2">
-        <button type="submit" class="btn btn-block btn-primary">Create</button>
+    <div class="col-3"> 
+        <label>{{form.name.label}}&nbsp;</label>
+        {{form.name}}
+    </div>
+    <div class="col-2"> 
+        <button type="submit" class="btn btn-block btn-primary">Login</button>
     </div>
 </div>
 </form>
