@@ -19,7 +19,7 @@ class Command(BaseCommand):
             if person.atLab:
                 logOut(person)
                 dm_id = CLIENT.api_call("im.open", user=person.slackID, return_im=True)['channel']['id']
-                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log in or log out at the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please contact <@U039ZJW8K> with the time you arrived at and left the lab in order to have the entry in the attendance system corrected."
+                message = "Hi " + person.name.split(" ")[0] + "--you forgot to log in or log out at the lab yesterday (" + (date.today()-timedelta(days=1)).strftime("%m/%d/%y") + ").  Please submit attendance changes at attendance.palyrobotics.com:8000/fixHours/ and feel free to contact @<U2S7Z0UCD> with any questions."
                 CLIENT.api_call("chat.postMessage", channel=dm_id, text=message, as_user=True)
                 sentMessage=True
             """

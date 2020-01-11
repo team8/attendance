@@ -95,8 +95,6 @@ def most_frequent_day(student):
         return day
     except:
         return "None"
-        
-
     
 def subteam_total_and_fqt_days(team):
     days = 1
@@ -140,6 +138,9 @@ def do_student_calcs(student):
     student.stddevTime = overallstddev
     student.averagePercentTimeWeighted = average
     student.stddevPercentTimeWeighted = stddev
+    
+    if student.admin:
+    	student.sudo = True
             
 def do_subteam_calcs(subteam):
     averageSub, stddevSub = subteam_avg_and_stddev_pct(subteam)

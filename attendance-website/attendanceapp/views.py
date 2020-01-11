@@ -183,11 +183,14 @@ def fixHours(request):
 			
 			for form in formset.cleaned_data:
 			
+				print form
+				
 				if not form:
 					continue
 				
 				if form['newTimeIn'] and form['newTimeOut']:
 				
+					#if the HoursWorked object doesn't exist yet
 					if not form['id']:
 						form['id'] = HoursWorked(owner=student, timeIn=form['newTimeIn'], timeOut=form['newTimeIn'])
 						form['id'].newTimeIn = form['newTimeIn']
@@ -197,18 +200,21 @@ def fixHours(request):
 						student.save()
 						
 					else:
+						#if a newTimeIn is provided
 						if form['id'].newTimeIn or not form['id'].newTimeIn and abs((form['newTimeIn']-form['id'].timeIn).total_seconds()) > 2:
 							form['id'].newTimeIn = form['newTimeIn']
 							form['id'].autoLogout = False
 							#print('edit ' + str(form['id']))
 					
+						#if a newTimeOut is provided
 						if form['id'].newTimeOut or not form['id'].newTimeOut and abs((form['newTimeOut']-form['id'].timeOut).total_seconds()) > 2:
 							form['id'].newTimeOut = form['newTimeOut']
 							form['id'].autoLogout = False
 							#print('edit ' + str(form['id']))
 						
 						form['id'].save()
-					
+				
+				#set newTimeOut and newTimeIn equal to delete the HoursWorked object upon approval
 				elif not form['newTimeIn'] and not form['newTimeOut'] and form['id'] and form['id'].timeIn and form['id'].timeOut:
 				
 					form['id'].newTimeIn = form['id'].timeIn
@@ -216,9 +222,9 @@ def fixHours(request):
 					form['id'].autoLogout = False
 					form['id'].save()
 					
-			#end for loop
+			
 			correctedHours = student.hoursWorked.all().filter(Q(newTimeIn__isnull=False) | Q(newTimeOut__isnull=False))
-			dates = list(set([x.newTimeOut.date() for x in correctedHours]))
+			dates = list(set([(x.newTimeIn or x.newTimeOut).date() for x in correctedHours]))
 			print(dates)
 			
 			hoursWorkedEditSets = HoursWorkedEditSet.objects.filter(owner=student)
@@ -227,9 +233,9 @@ def fixHours(request):
 			
 			for x in correctedHours:
 				try:
-					s = hoursWorkedEditSets.get(date=x.newTimeIn.date())
+					s = hoursWorkedEditSets.get((x.newTimeIn or x.newTimeOut).date())
 				except:
-					s = HoursWorkedEditSet(owner=student, date=x.newTimeIn.date())
+					s = HoursWorkedEditSet(owner=student, date=(x.newTimeIn or x.newTimeOut).date())
 					s.save()
 				
 				s.contents.add(x)

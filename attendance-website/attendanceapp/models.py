@@ -27,8 +27,8 @@ class Subteam(models.Model):
 class HoursWorked(models.Model): #This model should probably be renamed
 	timeIn = models.DateTimeField() #Attribute that displays the time the student clocked in
 	timeOut = models.DateTimeField() #Attribute that displays the time the student clocked out
-	newTimeIn = models.DateTimeField(null=True)
-	newTimeOut = models.DateTimeField(null=True)
+	newTimeIn = models.DateTimeField(null=True, blank=True)
+	newTimeOut = models.DateTimeField(null=True, blank=True)
 	day = models.CharField(max_length=25, default="None") #Day that the hours happened
 	totalTime = models.FloatField(default=0) #Attribute that...wait...this could be restructured a little bit, or at the very least renamed
 	validTime = models.FloatField(default=0)
@@ -89,6 +89,9 @@ class Student(models.Model):
 	averagePercentTimeWeighted = models.FloatField(default = 0) #weighted by length of lab hours
 	stddevPercentTimeWeighted = models.FloatField(default = 0) #weighted by length of lab hours
 	mostFrequentDay = models.CharField(max_length=25, default = "None")
+	
+	sudo = models.BooleanField(default=False) #determines whether user can sudo with attendance bot
+	admin = models.BooleanField(default=False) #determines whether user can use admin privileges with attendance bot
 
 	def __str__(self):
 		return self.name
