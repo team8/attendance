@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -34,6 +36,8 @@ class Student(models.Model):
     subTeam = models.ForeignKey(SubTeam, on_delete=models.PROTECT)
     hoursWorked = models.ManyToManyField(WorkTime, blank=True)  # Total hours worked throughout the season
     validTime = models.FloatField(default=0)  # Total valid hours worked throughout the season
+    atLab = models.BooleanField(default=False)
+    lastLoggedIn = models.DateTimeField(default=datetime.datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
 
     averageTime = models.FloatField(default=0)
     stddevTime = models.FloatField(default=0)

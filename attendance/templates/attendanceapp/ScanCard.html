@@ -1,0 +1,51 @@
+{% load static %}
+
+<html>
+
+<head>
+    <title>Attendance App</title>
+    
+    <link rel="stylesheet" type="text/css"href="{{ STATIC_URL }}attendanceapp/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css"href="{{ STATIC_URL }}attendanceapp/css/bootstrap-theme.min.css" />
+    
+    <link rel="stylesheet" type="text/css"href="{{ STATIC_URL }}attendanceapp/style.css" />
+    <link rel="icon" type="image/ico" href="{{STATIC_URL}}attendanceapp/favicon.ico"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="{{STATIC_URL}}attendanceapp/js/bootstrap.min.js"></script>
+    <script>
+    
+        $(function() {
+          $('form').submit(function(){
+            $("input[type='submit']", this)
+              .val("Please wait...")
+              .attr('disabled', 'disabled');
+            return true;
+          });
+        }); 
+        
+    </script>
+    
+</head>
+
+<body>
+
+  <div id="page-wrap">
+  
+    <div id="header">
+    </div>
+
+    <form class="form-inline" action="{% url 'scanCard' %}" method="post">
+      {% csrf_token %}
+      <input type="text" class="form-control" id="cardBox" name="studentID" autofocus pattern=".{8}" required title="8-character Student ID">
+      <input type="submit" class="form-control btn" value="Log in/out" style="width:7.5em;">
+      
+    </form>
+
+    <p>{{ message }}</p>
+
+  </div>
+
+</body>
+
+</html>
