@@ -2,12 +2,14 @@ import math
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.template import loader
 
 from attendanceapp.models import Student, LabHours, WorkTime
 from attendanceapp.util import convert_time
+
+from attendanceapp.forms import LoginForm
 
 
 def index(request):
@@ -45,6 +47,23 @@ def log_out(student):
     student.save()
 
     return time_worked.totalTime / 60  # TODO: update with minutes worked
+
+
+def login(request):
+    if not 'studentID' in request.session or request.session['studentID'] == None:
+        if request.method == 'GET':
+            return render(request, 'attendanceapp/login.html', {'form': LoginForm()})
+        elif request.method == 'POST':
+            form = LoginForm(request.POST)
+            if form.is_valid():
+                student_id = form.cleaned_data['name']
+                try:
+                    student = Student.objects.get(studentID=student_id)
+                except:
+                    return render(request, 'attendanceapp/login.html', {'form': LoginForm()})
+                request.session['studentID'] = form.cleaned_data['name']
+
+    return HttpResponseRedirect(request.GET.get('next', '/'))
 
 
 @login_required()
