@@ -23,5 +23,4 @@ from attendanceapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^$', views.index, name='Index'),
-    # url(r'^login/$', views.log_in, name="login"),
 ]
