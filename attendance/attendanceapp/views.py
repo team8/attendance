@@ -47,6 +47,7 @@ def logout_student(student):
     # add the minutes to the student's total time
     student.save()
 
+    print("Time worked", time_worked.totalTime)
     return time_worked.totalTime / 60  # TODO: update with minutes worked
 
 
@@ -77,7 +78,6 @@ def login(request):
     return HttpResponseRedirect(request.GET.get('next', '/'))
 
 
-@login_required()
 def login_page(request):
     # Check if we are passed the student ID -> check if it is first time loading the page
     # If this passes, that means a student is logging in/out
