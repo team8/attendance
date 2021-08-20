@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import include, url
+import django.contrib.auth.views as auth_views
+
+from attendanceapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    url(r'^$', views.index, name='Index'),
+    # url(r'^login/$', views.log_in, name="login"),
 ]
