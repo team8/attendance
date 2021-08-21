@@ -1,6 +1,5 @@
-import datetime
-
 from django.db import models
+from datetime import datetime, timedelta, date
 
 
 class SubTeam(models.Model):
@@ -28,6 +27,12 @@ class WorkTime(models.Model):
     weight = models.FloatField(default=0)
     owner = models.ForeignKey("Student", on_delete=models.CASCADE)  # Who these hours have been worked by
 
+    def save(self, *args, **kwargs):
+        models.Model.save(self, *args, **kwargs)
+        from attendanceapp.util import do_hours_worked_calcs
+        do_hours_worked_calcs(self)
+        models.Model.save(self, *args, **kwargs)
+
 
 class Student(models.Model):
     name = models.CharField(max_length=50)  # Name of the student
@@ -36,8 +41,9 @@ class Student(models.Model):
     subTeam = models.ForeignKey(SubTeam, on_delete=models.PROTECT)
     hoursWorked = models.ManyToManyField(WorkTime, blank=True)  # Total hours worked throughout the season
     validTime = models.FloatField(default=0)  # Total valid hours worked throughout the season
+    totalTime = models.FloatField(default=0)
     atLab = models.BooleanField(default=False)
-    lastLoggedIn = models.DateTimeField(default=datetime.datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
+    lastLoggedIn = models.DateTimeField(default=datetime.strptime('Jan 1 2000  12:00AM', '%b %d %Y %I:%M%p'))
 
     averageTime = models.FloatField(default=0)
     stddevTime = models.FloatField(default=0)
@@ -49,6 +55,12 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        from attendanceapp.util import do_student_calcs
+        models.Model.save(self, *args, **kwargs)
+        do_student_calcs(self)
+        models.Model.save(self, *args, **kwargs)
 
 
 class LabHours(models.Model):
@@ -63,5 +75,3 @@ class OverallStats(models.Model):
     name = models.CharField(default="Overall Stats", max_length=25)
     totalLabHours = models.FloatField()
     totalLabDays = models.IntegerField()
-
-# Create your models here.

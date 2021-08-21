@@ -1,6 +1,7 @@
 import math
 import re
 from datetime import datetime
+from pytz import timezone
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
@@ -21,7 +22,7 @@ def index(request):
 
 def login_student(student):
     student.atLab = True
-    student.lastLoggedIn = datetime.now()
+    student.lastLoggedIn = datetime.now(timezone('US/Pacific'))
     student.save()
 
 
@@ -33,7 +34,7 @@ def logout_student(student):
     time_in = student.lastLoggedIn
 
     # Get the time now so we get the most accurate  time in relation to when they logged in
-    time_out = datetime.now()
+    time_out = datetime.now(timezone('US/Pacific'))
 
     time_worked = WorkTime(timeIn=time_in, timeOut=time_out, owner=student)
     time_worked.save()
