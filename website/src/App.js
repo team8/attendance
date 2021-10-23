@@ -15,10 +15,10 @@ export default function App() {
         const request_options = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ title: 'React POST Request Example' })
+            body: JSON.stringify({ id: text })
         }
 
-        fetch("http://127.0.0.1:3030/api/posts", request_options).then(r => console.log("Done"))
+        fetch("http://127.0.0.1:3030/api/login", request_options).then(r => console.log("Done"))
     }
 
     console.log("START " + present)
