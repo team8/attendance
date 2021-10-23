@@ -1,7 +1,6 @@
 import React from "react";
 
 const PresentPeople = (props) => {
-    console.log(props.present + "END")
     return (
         <div>
             <h2>People at Lab</h2>

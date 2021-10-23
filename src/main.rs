@@ -1,6 +1,13 @@
+mod filters;
+mod handlers;
+
+use warp::*;
+
 #[tokio::main]
 async fn main() {
-    warp::serve(warp::fs::dir("website/build"))
+    let api = filters::filters();
+
+    warp::serve(api)
         .run(([127, 0, 0, 1], 3030))
         .await;
 }
