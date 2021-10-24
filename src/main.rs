@@ -1,14 +1,26 @@
+mod models;
+
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder, HttpRequest, Error};
 use actix_web::http::header::{ContentDisposition, DispositionType};
 use actix_files as fs;
 use log::*;
+use serde::Serialize;
 use simple_logger::SimpleLogger;
 
+use models::login;
+
 #[post("/api/login")]
-async fn login_request(req_body: String) -> impl Responder {
-    trace!("Login request {}", req_body);
+async fn login_request(form: web::Json<login::LoginRequest>) -> HttpResponse {
+    trace!("Login request {:?}", form);
+
+    let response = login::LoginResponse {
+        leaving: false,
+        valid: true,
+        name: "Test".to_string()
+    };
 
     HttpResponse::Ok()
+        .body(serde_json::to_string::<login::LoginResponse>(&response).unwrap())
 }
 
 #[actix_web::main]

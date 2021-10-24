@@ -1439,6 +1439,7 @@ dependencies = [
  "actix-web",
  "log",
  "serde",
+ "serde_json",
  "simple_logger",
  "tokio 1.12.0",
 ]
