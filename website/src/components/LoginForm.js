@@ -1,37 +1,63 @@
 import React from "react";
 import {useState} from "react";
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+
 
 const LoginForm = ({onAdd}) => {
     const [text, setText] = useState('')
+    const [error, setError] = useState(false)
 
-    const onSubmit = (e) => {
-        e.preventDefault()
-
-        if (!text) {
-            alert('Please add valid student ID')
-            setText('')
-            return;
-        }
-        let valid = /^\d+$/.test(text);
-        valid &= text.length === 8
+    const isValid = (t) => {
+        let valid = /^\d+$/.test(t);
+        valid &= t.length === 8
+        valid |= t.length === 0
         if (!valid) {
-            alert('Please add valid student ID')
-            setText('')
-            return
+            setError(true);
+            setText(t);
+            alert("invalid");
+            return false;
+        } else {
+            alert("valid");
+            setError(false);
+            setText(t);
+            return true;
         }
+    }
 
-        onAdd(text)
-        setText('')
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            if (isValid(text)) {
+                onAdd(text)
+            }
+            setText('')
+        }
     }
 
     return (
-        <form className='add-form' onSubmit={onSubmit}>
-            <label>Login </label>
-            <input type='text' placeholder='Student ID' value={text}
-                   onChange={(e) => setText(e.target.value)}/>
+        <Box
+            component="form"
+            sx={{
+                '& .MuiTextField-root': { m: 1, width: '25ch' },
+            }}
+            noValidate
+            autoComplete="off"
+        >
+            <div>
+                <TextField
+                    error={error}
+                    id="outlined-error"
+                    label="Student ID"
+                    defaultValue={text}
+                    value={text}
+                    onKeyUp={handleKeyDown}
 
-            <input type='submit' placeholder='Login'/>
-        </form>
+                    onChange={s => isValid(s.target.value)}
+                />
+            </div>
+        </Box>
     )
 }
 

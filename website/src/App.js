@@ -7,10 +7,8 @@ export default function App() {
     const [present, setPresent] = useState([])
 
     const login = (text) => {
-        setPresent([...present, {
-            name: text,
-            id: text
-        }])
+        console.log("Requesting to add " + text);
+        alert("smth")
 
         const request_options = {
             method: 'POST',
