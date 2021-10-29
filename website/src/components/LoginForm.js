@@ -15,10 +15,8 @@ const LoginForm = ({onAdd}) => {
         if (!valid) {
             setError(true);
             setText(t);
-            alert("invalid");
             return false;
         } else {
-            alert("valid");
             setError(false);
             setText(t);
             return true;
@@ -26,9 +24,8 @@ const LoginForm = ({onAdd}) => {
     }
 
     const handleKeyDown = (event) => {
+        event.preventDefault();
         if (event.key === 'Enter') {
-            event.preventDefault();
-
             if (isValid(text)) {
                 onAdd(text)
             }
@@ -38,12 +35,13 @@ const LoginForm = ({onAdd}) => {
 
     return (
         <Box
-            component="form"
+            component="TextField"
             sx={{
                 '& .MuiTextField-root': { m: 1, width: '25ch' },
             }}
             noValidate
             autoComplete="off"
+            onKeyUp={handleKeyDown}
         >
             <div>
                 <TextField
@@ -52,7 +50,6 @@ const LoginForm = ({onAdd}) => {
                     label="Student ID"
                     defaultValue={text}
                     value={text}
-                    onKeyUp={handleKeyDown}
 
                     onChange={s => isValid(s.target.value)}
                 />

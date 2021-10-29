@@ -1,6 +1,9 @@
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Student {
-    id: u32,
-    name: String,
-    total_time: f64,
-    valid_time: f64,
+    pub(crate) id: u32,
+    pub(crate) name: String,
+    pub(crate) total_time: f64,
+    pub(crate) valid_time: f64,
 }

@@ -8,7 +8,6 @@ export default function App() {
 
     const login = (text) => {
         console.log("Requesting to add " + text);
-        alert("smth")
 
         const request_options = {
             method: 'POST',
